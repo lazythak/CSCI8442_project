@@ -177,3 +177,15 @@ def tangency(p: Point, v: Point, u: Point, r: Point) -> bool:
     """
     line = DLine(p, v)
     return (sidedness(line, u) < 0) == (sidedness(line, r) < 0)
+
+
+s = Point(1, 2)
+a = Point(0, 1)
+b = Point(1, 0)
+c = Point(1, 4)
+d = Point(2, 0)
+e = Point(2, 3)
+S1 = [d, b, a, c, s, e]
+
+S2 = [Point(0, 0), Point(1.12312, 2.4123), Point(3, 0), Point(0.124896, 0.9864231), Point(
+    0, 3), Point(3, 3), Point(1, 2), Point(2, 1), ]
