@@ -31,3 +31,27 @@ def jarvis(S: List[Point]) -> List[Point]:
             loop = False
 
     return P
+
+
+def andrew(S: List[Point]) -> List[Point]:
+    S = sorted(S, key=lambda p: (p.x, p.y))
+    U = []
+    L = []
+
+    # Compute lower hull
+    for p in S:
+        while len(L) >= 2 and turn(L[-2], L[-1], p) >= 0:
+            L.pop()
+        L.append(p)
+
+    # Compute upper hull
+    for p in reversed(S):
+        while len(U) >= 2 and turn(U[-2], U[-1], p) >= 0:
+            U.pop()
+        U.append(p)
+
+    # remove duplicate points, last of each is the first of the other
+    L.pop()
+    U.pop()
+
+    return L + U
