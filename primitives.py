@@ -128,8 +128,10 @@ def intersection(seg1: LineSeg, seg2: LineSeg) -> bool:
     Returns:
         bool: true if they intersect, false otherwise
     """
-    line = DLine(seg1.p1, seg1.p2)
-    return (sidedness(line, seg2.p1) < 0) != (sidedness(line, seg2.p2) < 0)
+    line1 = DLine(seg1.p1, seg1.p2)
+    line2 = DLine(seg2.p1, seg2.p2)
+    return ((sidedness(line1, seg2.p1) < 0) != (sidedness(line1, seg2.p2) < 0)) \
+        and ((sidedness(line2, seg1.p1) < 0) != (sidedness(line2, seg1.p2) < 0))
 
 
 def area(p: Point, q: Point, r: Point) -> float:
@@ -186,6 +188,8 @@ c = Point(1, 4)
 d = Point(2, 0)
 e = Point(2, 3)
 S1 = [d, b, a, c, s, e]
+l1 = LineSeg(a, Point.origin())
+l2 = LineSeg(Point(2, 2), Point(-2, 2))
 
 S2 = [Point(0, 0), Point(1.12312, 2.4123), Point(3, 0), Point(0.124896, 0.9864231), Point(
     0, 3), Point(3, 3), Point(1, 2), Point(2, 1), ]
