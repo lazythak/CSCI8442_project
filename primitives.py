@@ -193,3 +193,6 @@ l2 = LineSeg(Point(2, 2), Point(-2, 2))
 
 S2 = [Point(0, 0), Point(1.12312, 2.4123), Point(3, 0), Point(0.124896, 0.9864231), Point(
     0, 3), Point(3, 3), Point(1, 2), Point(2, 1), ]
+
+S3 = [Point(0, 0), Point(1.12312, 2.4123), Point(3, 1), Point(0.124896, 0.9864231), Point(
+    1, 3), Point(3, 3), Point(1, 2), Point(2, 1), ]

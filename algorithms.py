@@ -20,9 +20,9 @@ def jarvis(S: List[Point]) -> List[Point]:
     while loop:  # Runs once for each point on the hull
         P.append(pointOnHull)
         endpoint = S[0]
-        for j in range(0, len(S)):  # Scans over every point
-            if (endpoint == pointOnHull) or (sidedness(DLine(P[i], endpoint), S[j]) > 0):
-                endpoint = S[j]
+        for p in S:  # Scans over every point
+            if (endpoint == pointOnHull) or (sidedness(DLine(P[i], endpoint), p) > 0):
+                endpoint = p
         i = i+1
         pointOnHull = endpoint
 
