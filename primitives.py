@@ -101,6 +101,29 @@ def turn(p: Point, q: Point, r: Point) -> float:
     return LineSeg(p, q).cross(LineSeg(q, r))
 
 
+def turn_i(p: Point, q: Point, r: Point) -> int:
+    """Computes if the points p, q, and r, in order turn left, continue straight, or turn right, at q
+
+    Args:
+        p (Point): The first point
+        q (Point): The turn point
+        r (Point): The final point
+
+    Returns:
+        int: The turn value.
+               -1 for left
+               0 for straight
+               +1 for right
+    """
+    v = turn(p, q, r)
+    if v < 0:
+        return -1
+    elif v > 0:
+        return 1
+    else:
+        return 0
+
+
 def sidedness(line: DLine, r: Point) -> float:
     """Computes if r is the left, right, or on the directed line line
 
@@ -115,6 +138,26 @@ def sidedness(line: DLine, r: Point) -> float:
                Negative for right
     """
     return LineSeg(line.p1, line.p2).cross(LineSeg(line.p1, r))
+
+
+def sidedness_i(line: DLine, r: Point) -> int:
+    """Computes if r is to the left, right, or on the directed line
+
+    Args:
+        line (DLine): Directed line to compute sidedness with respect to
+        r (Point): Point to compute sidedness for
+
+    Returns:
+        int: +1 for Left, 0 for Colinear, -1 for Right
+    """
+
+    v = sidedness(line, r)
+    if v < 0:
+        return -1
+    elif v > 0:
+        return 1
+    else:
+        return 0
 
 
 def intersection(seg1: LineSeg, seg2: LineSeg) -> bool:
