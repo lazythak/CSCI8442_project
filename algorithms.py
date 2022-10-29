@@ -40,13 +40,13 @@ def andrew(S: List[Point]) -> List[Point]:
 
     # Compute lower hull
     for p in S:
-        while len(L) >= 2 and turn(L[-2], L[-1], p) >= 0:
+        while len(L) >= 2 and turn(L[-2], L[-1], p) <= 0:
             L.pop()
         L.append(p)
 
     # Compute upper hull
     for p in reversed(S):
-        while len(U) >= 2 and turn(U[-2], U[-1], p) >= 0:
+        while len(U) >= 2 and turn(U[-2], U[-1], p) <= 0:
             U.pop()
         U.append(p)
 
