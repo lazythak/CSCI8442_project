@@ -123,6 +123,33 @@ def findquickhull(S: List[Point], a, b) -> List[Point]:
             P = P+DD
         return P
 
+def jarvis(S: List[Point]) -> List[Point]:
+    scttr(S)
+    pointOnHull = leftmost(S)  # linear cost scan
+    markPoints([pointOnHull])
+    i = 0
+    loop = True
+    P = []
+
+    while loop:  # Runs once for each point on the hull
+        P.append(pointOnHull)
+        endpoint = S[0]
+        for p in S:  # Scans over every point
+            if (endpoint == pointOnHull) or (sidedness(DLine(P[i], endpoint), p) > 0):
+                endpoint = p
+        i = i+1
+        connectPoints([pointOnHull, endpoint])
+        markPoints([endpoint])
+        pointOnHull = endpoint
+
+        # End Condition
+        if endpoint == P[0]:
+            loop = False
+
+    return P
+
+
+
 
 if __name__ == '__main__':
     S = [Point(-1,0), Point(0,1), Point(-1/math.sqrt(2),-1/math.sqrt(2)), Point(0,-1), Point(1,0), Point(0.2,-0.2), Point(-0.5,-0.2)]
@@ -132,6 +159,6 @@ if __name__ == '__main__':
     # removeLines(lines)
     # markPoints([Point(-1,0), Point(0,1)])
 
-    plt.show()
-    print(quickhull(S))
 
+    quickhull(S)
+    # jarvis(S)
