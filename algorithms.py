@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from primitives import *
 
 
@@ -61,13 +61,24 @@ def partition_list(S: List, size: int) -> List[List]:
     return [S[i: i + size] for i in range(0, len(S), size)]
 
 
-def rightmost(S: List[Point]) -> Point:
-    right = S[0]
-    for p in S[1:]:
-        if (p.x, p.y) > (right.x, right.y):
-            right = p
+def subhull_rightmost(S: List[List[Point]]) -> Tuple[int, int]:
+    """Calculates and returns the index into S of the rightmost point
 
-    return right
+    Args:
+        S (List[List[Point]]): A list of convex hulls, where each hull is represented by its own list
+
+    Returns:
+        Tuple[int, int]: (h, p), the index h into S, and the index p into S[h], where S[h][p] is the rightmost point in S
+    """
+    rh = 0
+    ri = 0
+    for (hi, hull) in enumerate(S):
+        for (pi, p) in enumerate(hull):
+            if (p.x, p.y) > (S[rh][ri].x, S[rh][ri].y):
+                rh = hi
+                ri = pi
+
+    return (rh, ri)
 
 
 def below(P: Point, L1: Point, L2: Point) -> bool:
@@ -78,7 +89,7 @@ def above(P: Point, L1: Point, L2: Point) -> bool:
     return (L1.x - P.x) * (L2.y - P.y) - (L2.x - P.x) * (L1.y - P.y) > 0
 
 
-def rtangent(v: List[Point], p: Point) -> Point:
+def rtangent(v: List[Point], p: Point) -> int:
     """computes the right, or upper, tangent from p to v.
     Preconditions: v has size > 1, p on exterior of v
 
@@ -98,7 +109,7 @@ def rtangent(v: List[Point], p: Point) -> Point:
     # right tangent is local maximum for ordering where points to left of line are lower than those on
     if (below(p, v[1], v[0]) and not above(p, v[n-1], v[0])):
         print(f"early exit, {v[0]}")
-        return v[0]
+        return 0
 
     a = 0
     b = n       # initial chain = [0, n], let v[n] = v[0]
@@ -110,7 +121,7 @@ def rtangent(v: List[Point], p: Point) -> Point:
         print(v[a:b])
         dnC = below(p, v[(c+1) % n], v[c])
         if (dnC and not above(p, v[c-1], v[c])):
-            return v[c]  # v[c] is tangent
+            return c  # v[c] is tangent
 
         # no max found, continue search
         # select either [a, c] or [c, b]
@@ -149,12 +160,12 @@ def rtangent(v: List[Point], p: Point) -> Point:
             # Error case, should not happen.
             # Known causes: p is in v, or p is colinear with all points in v
             print(".....................LOOP")
-            return v[0]
+            return 0
 
 
 def chan_step(S: List[Point], m: int, H: int) -> List[Point]:
-    partitions = partition_list(S, m)
-    subhulls = []
+    partitions: List[List[Point]] = partition_list(S, m)
+    subhulls: List[List[Point]] = []
     for i in range(0, len(partitions)):
         subhulls.append(andrew(partitions[i]))
 
@@ -162,24 +173,34 @@ def chan_step(S: List[Point], m: int, H: int) -> List[Point]:
     print(subhulls)
 
     # P[0] is the rightmost point, which we know must be on the hull
-    P = [rightmost(S)]
+    P = [subhull_rightmost(subhulls)]
 
     for k in range(0, H):
-        q = []  # point
+        q: List[Tuple[int, int]] = []  # point
+        (ch, cp) = P[-1]  # hull and point indices of most recent point on hull
         for i in range(0, len(subhulls)):
-            q.append(rtangent(subhulls[i], P[-1]))
+            if ch == i:
+                # Special case, most recent point is on this hull, get next element on this subhull
+                q.append((i, (cp + 1) % len(subhulls[i])))
+            else:
+                q.append((i, rtangent(subhulls[i], subhulls[ch][cp])))
 
         # append point with max angle from q, use step of jarvis march
-        endpoint = q[0]
-        for potential in q:
-            if (endpoint == P[-1]) or (sidedness(DLine(P[-1], endpoint), potential) < 0):
-                endpoint = potential
-        P.append(endpoint)
+        (eh, ep) = q[0]
+        for (ph, pp) in q:
+            (ch, cp) = P[-1]
+            if (subhulls[eh][ep] == subhulls[ch][cp]) or (sidedness(DLine(subhulls[ch][cp], subhulls[eh][ep]), subhulls[ph][pp]) < 0):
+                eh = ph
+                ep = pp
+        P.append((eh, ep))
         print(q)
         print(f"Added {P[-1]} to hull.\n")
 
         if P[-1] == P[0]:
-            return P[0:-1]
+            out: List[Point] = []
+            for (h, p) in P[0:-1]:
+                out.append(subhulls[h][p])
+            return out
 
     return []  # "incomplete"
 
