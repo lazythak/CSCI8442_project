@@ -21,7 +21,7 @@ def jarvis(S: List[Point]) -> List[Point]:
         P.append(pointOnHull)
         endpoint = S[0]
         for p in S:  # Scans over every point
-            if (endpoint == pointOnHull) or (sidedness(DLine(P[i], endpoint), p) > 0):
+            if (endpoint == pointOnHull) or (sidedness(DLine(P[i], endpoint), p) < 0):
                 endpoint = p
         i = i+1
         pointOnHull = endpoint
