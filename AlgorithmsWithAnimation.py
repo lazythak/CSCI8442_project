@@ -242,7 +242,7 @@ def divideConquer(S: List[Point]) -> List[Point]:
         return combine(divideConquer(S[0:len(S)//2]), divideConquer(S[len(S)//2:len(S)]))
 
 def divideConquer0(S: List[Point]) -> List[Point]:
-    S = sorted(S, key = lambda p: p.x)
+    S = sorted(S, key = lambda z: z.x)
     return divideConquer(S)
 
 
