@@ -130,6 +130,7 @@ def rtangent(v: List[Point], p: Point) -> int:
         print(v[a:b])
         dnC = below(p, v[(c+1) % n], v[c])
         if (dnC and not above(p, v[c-1], v[c])):
+            print(f"Normal exit, {v[c]}")
             return c  # v[c] is tangent
 
         # no max found, continue search
@@ -206,7 +207,7 @@ def chan_step(S: List[Point], m: int, H: int) -> List[Point]:
                 ep = pp
         P.append((eh, ep))
         print(q)
-        print(f"Added {P[-1]} to hull.\n")
+        print(f"Added {subhulls[eh][ep]} to hull.\n")
 
         if P[-1] == P[0]:
             out: List[Point] = []
