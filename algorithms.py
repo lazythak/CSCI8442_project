@@ -34,6 +34,10 @@ def jarvis(S: List[Point]) -> List[Point]:
 
 
 def andrew(S: List[Point]) -> List[Point]:
+    if len(S) <= 1:
+        # Cover the case where the input set has one or zero points
+        return S.copy()
+
     S = sorted(S, key=lambda p: (p.x, p.y))
     U = []
     L = []
@@ -104,6 +108,11 @@ def rtangent(v: List[Point], p: Point) -> int:
         int: index of point that the tangent hits in v
     """
     n = len(v)
+    if n == 1:
+        # case to handle when v is of size 1
+        print("Size 1 hull, short-circuit")
+        return 0
+
     print(f"tangent request: {p}")
 
     # right tangent is local maximum for ordering where points to left of line are lower than those on
@@ -181,7 +190,10 @@ def chan_step(S: List[Point], m: int, H: int) -> List[Point]:
         for i in range(0, len(subhulls)):
             if ch == i:
                 # Special case, most recent point is on this hull, get next element on this subhull
-                q.append((i, (cp + 1) % len(subhulls[i])))
+                if len(subhulls[i]) != 1:
+                    # If the size is one, then that's the point we're currently at. Don't want to
+                    # get the current point, so just skip this subhull in this case
+                    q.append((i, (cp + 1) % len(subhulls[i])))
             else:
                 q.append((i, rtangent(subhulls[i], subhulls[ch][cp])))
 
