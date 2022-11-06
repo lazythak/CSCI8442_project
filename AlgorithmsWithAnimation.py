@@ -156,9 +156,15 @@ def findquickhull(S: List[Point], a, b) -> List[Point]:
 
 # Jarvis Algorithm
 def jarvis(S: List[Point]) -> List[Point]:
-    scttr(S)
+    (_, ax) = new_plot()
+
+    plot_points(S, ax, c="tab:grey", wait=1)
+
     pointOnHull = leftmost(S)  # linear cost scan
-    markPoints([pointOnHull])
+
+    clear(ax)
+    plot_points(S, ax, c="tab:grey", wait=1)
+
     i = 0
     loop = True
     P = []
@@ -166,19 +172,37 @@ def jarvis(S: List[Point]) -> List[Point]:
     while loop:  # Runs once for each point on the hull
         P.append(pointOnHull)
         endpoint = S[0]
+
         for p in S:  # Scans over every point
+            clear(ax)
+            plot_points(S, ax, c="tab:grey", wait=0)
+            mark_points(P, ax, c="tab:green", wait=0)
+            link_points(P, ax, c="g", wait=0)
+            mark_point(p, ax, c="tab:blue", wait=0)
+            draw_line(P[-1], endpoint, ax, c="m", wait=0)
+            link_points([P[-1], endpoint], ax, c="y", wait=0)
+            mark_point(endpoint, ax, c="tab:orange", wait=1)
+
             if (endpoint == pointOnHull) or (sidedness(DLine(P[i], endpoint), p) > 0):
+                mark_point(p, ax, c="tab:olive", wait=1)
                 endpoint = p
+            else:
+                mark_point(p, ax, c="tab:red", wait=1)
+
         i = i+1
-        connectPoints([pointOnHull, endpoint])
-        markPoints([endpoint])
         pointOnHull = endpoint
 
         # End Condition
         if endpoint == P[0]:
             loop = False
 
-    return P
+    P.append(P[0])
+    clear(ax)
+    plot_points(S, ax, c="tab:grey", wait=0)
+    mark_points(P, ax, c="tab:green", wait=0)
+    link_points(P, ax, c="g", wait=1)
+
+    return P[0:-1]
 
 
 # Divide and Conquer
@@ -358,6 +382,6 @@ if __name__ == '__main__':
     # markPoints([Point(-1,0), Point(0,1)])
 
     # print(quickhull(S))
-    # print(jarvis(S))
+    print(jarvis(S))
     # print(divideConquer0(S))
-    print(andrew_animated(S))
+    # print(andrew_animated(S))
