@@ -85,6 +85,22 @@ def link_points(S: List[Point], ax: axes.Axes, c=None, wait=WAIT) -> List[matplo
     return lines
 
 
+def draw_line(p1: Point, p2: Point, ax: axes.Axes, c=None, wait=WAIT):
+    """Draws infinite line between points p1 and p2. If p1 and p2 are identical, draws no line
+       but still waits.
+
+    Args:
+        p1 (Point): Point 1 on line
+        p2 (Point): Point 2 on line
+        ax (axes.Axes): Axes to draw line on
+        c (_type_, optional): Color of line to draw. Defaults to None.
+        wait (float, optional): Time to wait after drawing lines. Defaults to WAIT.
+    """
+    if p1 != p2:
+        ax.axline((p1.x, p1.y), (p2.x, p2.y), color=c)
+    pause(wait)
+
+
 def clear(ax: axes.Axes):
     """Wrapper around Axes.clear()
 
