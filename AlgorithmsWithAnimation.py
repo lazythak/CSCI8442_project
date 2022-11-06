@@ -257,81 +257,87 @@ def divideConquer0(S: List[Point]) -> List[Point]:
 # Andrew's Algorithm, Animated
 
 
+def draw_andrews_state(S, U, L, p: Point | None, ax, wait, L_complete, U_complete):
+    """Draws the current state of andrews algorithm
+
+    Args:
+        S (List[Point]): The full point set
+        U (List[Point]): The current upper hull list
+        L (List[Point]): The current lower hull list
+        p (Point | None): The current point to add
+        ax (Axes): The axes on which to draw the plot
+        wait (float): The time length to wait after drawing the images
+        L_complete (bool): If the lower hull is complete
+        U_complete (bool): If the upper hull is complete
+    """
+
+    clear(ax)
+    plot_points(S, ax, c="tab:grey", wait=0)
+
+    if L_complete:
+        mark_points(L, ax, c="tab:green", wait=0)
+        link_points(L, ax, c="g", wait=0)
+    else:
+        mark_points(L, ax, c="tab:orange", wait=0)
+        link_points(L, ax, c="k", wait=0)
+        if p is not None:
+            if len(L) != 0:
+                link_points([L[-1], p], ax, c="y", wait=0)
+
+    if U_complete:
+        mark_points(U, ax, c="tab:green", wait=0)
+        link_points(U, ax, c="g", wait=0)
+    else:
+        mark_points(U, ax, c="tab:orange", wait=0)
+        link_points(U, ax, c="k", wait=0)
+        if p is not None:
+            if len(U) != 0:
+                link_points([U[-1], p], ax, c="y", wait=0)
+
+    if p is not None:
+        if L_complete:
+            mark_point(S[-1], ax, c="tab:green", wait=0)
+        mark_point(S[0], ax, c="tab:green", wait=0)
+        mark_point(p, ax, c="tab:blue", wait=0)
+
+    pause(wait)
+
+
 def andrew_animated(S: List[Point]) -> List[Point]:
     if len(S) <= 1:
         # Cover the case where the input set has one or zero points
         return S.copy()
 
-    (fig, ax) = new_plot()
-    plot_points(S, ax, c="tab:grey")
-
     S = sorted(S, key=lambda p: (p.x, p.y))
     U = []
     L = []
 
+    (_, ax) = new_plot()
+    draw_andrews_state(S, U, L, None, ax, 1, False, False)
+
     # Compute lower hull
     for p in S:
-        clear(ax)
-        plot_points(S, ax, c="tab:grey", wait=0)
-        mark_points(L, ax, c="tab:orange", wait=0)
-        mark_point(S[0], ax, c="tab:green", wait=0)
-        mark_point(p, ax, c="tab:blue", wait=0)
-        if len(L) != 0:
-            link_points([L[-1], p], ax, c="y", wait=0)
-        link_points(L, ax, c="k", wait=1)
+        draw_andrews_state(S, U, L, p, ax, 1, False, False)
 
         while len(L) >= 2 and turn(L[-2], L[-1], p) <= 0:
             L.pop()
-
-            clear(ax)
-            plot_points(S, ax, c="tab:grey", wait=0)
-            mark_points(L, ax, c="tab:orange", wait=0)
-            mark_point(S[0], ax, c="tab:green", wait=0)
-            mark_point(p, ax, c="tab:blue", wait=0)
-            link_points([L[-1], p], ax, c="y", wait=0)
-            link_points(L, ax, c="k", wait=1)
+            draw_andrews_state(S, U, L, p, ax, 1, False, False)
 
         L.append(p)
 
-    clear(ax)
-    plot_points(S, ax, c="tab:grey", wait=0)
-    mark_points(L, ax, c="tab:green", wait=0)
-    link_points(L, ax, c="g", wait=1)
+    draw_andrews_state(S, U, L, None, ax, 1, True, False)
 
     # Compute upper hull
     for p in reversed(S):
-        clear(ax)
-        plot_points(S, ax, c="tab:grey", wait=0)
-        mark_points(L, ax, c="tab:green", wait=0)
-        link_points(L, ax, c="g", wait=0)
-        mark_points(U, ax, c="tab:orange", wait=0)
-        mark_point(S[-1], ax, c="tab:green", wait=0)
-        mark_point(p, ax, c="tab:blue", wait=0)
-        if len(U) != 0:
-            link_points([U[-1], p], ax, c="y", wait=0)
-        link_points(U, ax, c="k", wait=1)
+        draw_andrews_state(S, U, L, p, ax, 1, True, False)
 
         while len(U) >= 2 and turn(U[-2], U[-1], p) <= 0:
             U.pop()
-
-            clear(ax)
-            plot_points(S, ax, c="tab:grey", wait=0)
-            mark_points(L, ax, c="tab:green", wait=0)
-            link_points(L, ax, c="g", wait=0)
-            mark_points(U, ax, c="tab:orange", wait=0)
-            mark_point(S[-1], ax, c="tab:green", wait=0)
-            mark_point(p, ax, c="tab:blue", wait=0)
-            link_points([U[-1], p], ax, c="y", wait=0)
-            link_points(U, ax, c="k", wait=1)
+            draw_andrews_state(S, U, L, p, ax, 1, True, False)
 
         U.append(p)
 
-    clear(ax)
-    plot_points(S, ax, c="tab:grey", wait=0)
-    mark_points(L, ax, c="tab:green", wait=0)
-    link_points(L, ax, c="g", wait=0)
-    mark_points(U, ax, c="tab:green", wait=0)
-    link_points(U, ax, c="g", wait=1.5)
+    draw_andrews_state(S, U, L, None, ax, 1.5, True, True)
 
     # remove duplicate points, last of each is the first of the other
     L.pop()
