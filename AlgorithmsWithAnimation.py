@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from primitives import *
 import matplotlib.pyplot as plt
 
@@ -23,7 +23,7 @@ def rightmost(S: List[Point]) -> Point:
     return right
 
 
-def leftmostWithInd(S: List[Point]) -> Point:
+def leftmostWithInd(S: List[Point]) -> Tuple[Point, int]:
     left = S[0]
     left_ind = 0
     for j in range(1, len(S)):
@@ -34,7 +34,7 @@ def leftmostWithInd(S: List[Point]) -> Point:
     return left, left_ind
 
 
-def rightmostWithInd(S: List[Point]) -> Point:
+def rightmostWithInd(S: List[Point]) -> Tuple[Point, int]:
     right = S[0]
     right_ind = 0
     for j in range(1, len(S)):
