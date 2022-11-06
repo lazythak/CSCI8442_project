@@ -85,12 +85,12 @@ def subhull_rightmost(S: List[List[Point]]) -> Tuple[int, int]:
     return (rh, ri)
 
 
-def below(P: Point, L1: Point, L2: Point) -> bool:
-    return (L1.x - P.x) * (L2.y - P.y) - (L2.x - P.x) * (L1.y - P.y) < 0
+def below(c: Point, to: Point, frm: Point) -> bool:
+    return angular_about_point(c, to, frm) < 0
 
 
-def above(P: Point, L1: Point, L2: Point) -> bool:
-    return (L1.x - P.x) * (L2.y - P.y) - (L2.x - P.x) * (L1.y - P.y) > 0
+def above(c: Point, to: Point, frm: Point) -> bool:
+    return angular_about_point(c, to, frm) > 0
 
 
 def rtangent(v: List[Point], p: Point) -> int:

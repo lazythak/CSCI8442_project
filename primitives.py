@@ -192,18 +192,30 @@ def area(p: Point, q: Point, r: Point) -> float:
 
 
 def angular_orientation(p: Point, q: Point) -> float:
-    """Computes of p is clockwise or counterclockwise from q
+    """Calculates angular direction of p relative to q about the origin
 
     Args:
-        p (Point): point to measure to, not the origin
-        q (Point): point to measure from, not the origin
+        p (Point): Point to measure angular orientation to
+        q (Point): Point to measure angular orientation from
 
     Returns:
-        float: Positive if p is counterclockwise from q
-               Negative if p is clockwise from q
-               Zero if p is colinear with q
+        float: >0 if p is ccw from q. =0 if p is colinear with q. <0 if p is cw from q.
     """
-    return LineSeg(Point.origin(), q).cross(LineSeg(Point.origin(), p))
+    return angular_about_point(Point.origin(), p, q)
+
+
+def angular_about_point(c: Point, p: Point, q: Point) -> float:
+    """Calculates angular direction of p relative to q about the point c
+
+    Args:
+        c (Point): Center point to find angular orientation relative to
+        p (Point): Point to measure angular orientation to
+        q (Point): Point to measure angular orientation from
+
+    Returns:
+        float: >0 if p is ccw from q. =0 if p is colinear with q. <0 if p is cw from q.
+    """
+    return LineSeg(c, q).cross(LineSeg(c, p))
 
 
 def tangency(p: Point, v: Point, u: Point, r: Point) -> bool:
