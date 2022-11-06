@@ -10,10 +10,23 @@ WAIT = 1.5
 
 
 def new_plot() -> Tuple[fgr.Figure, axes.Axes]:
+    """Wrapper around plt.subplots
+
+    Returns:
+        Tuple[fgr.Figure, axes.Axes]: Tuple of the figure and the axes on which drawings will be made.
+    """
     return plt.subplots()
 
 
 def plot_points(S: List[Point], ax: axes.Axes, c=None, wait=WAIT):
+    """Plots the given points at a small size
+
+    Args:
+        S (List[Point]): The points to plot
+        ax (axes.Axes): The axes on which to plot
+        c (_type_, optional): The color with which to draw the points. Defaults to None.
+        wait (float, optional): Time to wait after drawing points. Defaults to WAIT.
+    """
     xcoord = []
     ycoord = []
     for p in S:
@@ -24,18 +37,46 @@ def plot_points(S: List[Point], ax: axes.Axes, c=None, wait=WAIT):
 
 
 def mark_point(p: Point, ax: axes.Axes, s=200, c=None, wait=WAIT):
+    """Draws a specific point at specified size and in specified color
+
+    Args:
+        p (Point): The point to draw
+        ax (axes.Axes): The axes on which to draw the point
+        s (int, optional): The size of the point. Defaults to 200.
+        c (_type_, optional): The color to draw the point. Defaults to None.
+        wait (float, optional): Time to wait after drawing the point. Defaults to WAIT.
+    """
     ax.scatter(p.x, p.y, s=s, color=c)
     pause(wait)
 
 
 def mark_points(S: List[Point], ax: axes.Axes, s=200, c=None, wait=WAIT):
+    """Calls mark_points on all points in S, with no delay between
+
+    Args:
+        S (List[Point]): Points to draw
+        ax (axes.Axes): Axes on which to draw points
+        s (int, optional): Size with which to draw points. Defaults to 200.
+        c (_type_, optional): Color with which to draw points. Defaults to None.
+        wait (float, optional): Time to wait after drawing all points is complete. Defaults to WAIT.
+    """
     for p in S:
         mark_point(p, ax, s=s, c=c, wait=0)
     pause(wait)
 
 
-def link_points(S: List[Point], ax: axes.Axes, c=None, wait=WAIT) -> \
-        List[matplotlib.lines.Line2D]:
+def link_points(S: List[Point], ax: axes.Axes, c=None, wait=WAIT) -> List[matplotlib.lines.Line2D]:
+    """Draws lines between adjacent points in S
+
+    Args:
+        S (List[Point]): Points to link with lines
+        ax (axes.Axes): Axes on which to draw the points
+        c (_type_, optional): Color to draw lines in. Defaults to None.
+        wait (float, optional): Time to wait after drawing all lines. Defaults to WAIT.
+
+    Returns:
+        List[matplotlib.lines.Line2D]: List of all lines created
+    """
 
     lines = []
     for i in range(1, len(S)):
@@ -45,9 +86,19 @@ def link_points(S: List[Point], ax: axes.Axes, c=None, wait=WAIT) -> \
 
 
 def clear(ax: axes.Axes):
+    """Wrapper around Axes.clear()
+
+    Args:
+        ax (axes.Axes): Axes to clear drawings from
+    """
     ax.clear()
 
 
-def pause(wait):
+def pause(wait: float):
+    """Wrapper around plt.pause() with different handling of 0 wait. Waits of 0 lead to no delay
+
+    Args:
+        wait (float): Time to pause drawing for
+    """
     if wait != 0:
         plt.pause(wait)
