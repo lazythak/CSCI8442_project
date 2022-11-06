@@ -1,6 +1,7 @@
 from typing import List, Tuple
 from primitives import *
 import matplotlib.pyplot as plt
+from animation_api import *
 
 wait = 1.5
 
@@ -253,6 +254,91 @@ def divideConquer0(S: List[Point]) -> List[Point]:
     S = sorted(S, key=lambda z: z.x)
     return divideConquer(S)
 
+# Andrew's Algorithm, Animated
+
+
+def andrew_animated(S: List[Point]) -> List[Point]:
+    if len(S) <= 1:
+        # Cover the case where the input set has one or zero points
+        return S.copy()
+
+    (fig, ax) = new_plot()
+    plot_points(S, ax, c="tab:grey")
+
+    S = sorted(S, key=lambda p: (p.x, p.y))
+    U = []
+    L = []
+
+    # Compute lower hull
+    for p in S:
+        clear(ax)
+        plot_points(S, ax, c="tab:grey", wait=0)
+        mark_points(L, ax, c="tab:orange", wait=0)
+        mark_point(S[0], ax, c="tab:green", wait=0)
+        mark_point(p, ax, c="tab:blue", wait=0)
+        if len(L) != 0:
+            link_points([L[-1], p], ax, c="y", wait=0)
+        link_points(L, ax, c="k", wait=1)
+
+        while len(L) >= 2 and turn(L[-2], L[-1], p) <= 0:
+            L.pop()
+
+            clear(ax)
+            plot_points(S, ax, c="tab:grey", wait=0)
+            mark_points(L, ax, c="tab:orange", wait=0)
+            mark_point(S[0], ax, c="tab:green", wait=0)
+            mark_point(p, ax, c="tab:blue", wait=0)
+            link_points([L[-1], p], ax, c="y", wait=0)
+            link_points(L, ax, c="k", wait=1)
+
+        L.append(p)
+
+    clear(ax)
+    plot_points(S, ax, c="tab:grey", wait=0)
+    mark_points(L, ax, c="tab:green", wait=0)
+    link_points(L, ax, c="g", wait=1)
+
+    # Compute upper hull
+    for p in reversed(S):
+        clear(ax)
+        plot_points(S, ax, c="tab:grey", wait=0)
+        mark_points(L, ax, c="tab:green", wait=0)
+        link_points(L, ax, c="g", wait=0)
+        mark_points(U, ax, c="tab:orange", wait=0)
+        mark_point(S[-1], ax, c="tab:green", wait=0)
+        mark_point(p, ax, c="tab:blue", wait=0)
+        if len(U) != 0:
+            link_points([U[-1], p], ax, c="y", wait=0)
+        link_points(U, ax, c="k", wait=1)
+
+        while len(U) >= 2 and turn(U[-2], U[-1], p) <= 0:
+            U.pop()
+
+            clear(ax)
+            plot_points(S, ax, c="tab:grey", wait=0)
+            mark_points(L, ax, c="tab:green", wait=0)
+            link_points(L, ax, c="g", wait=0)
+            mark_points(U, ax, c="tab:orange", wait=0)
+            mark_point(S[-1], ax, c="tab:green", wait=0)
+            mark_point(p, ax, c="tab:blue", wait=0)
+            link_points([U[-1], p], ax, c="y", wait=0)
+            link_points(U, ax, c="k", wait=1)
+
+        U.append(p)
+
+    clear(ax)
+    plot_points(S, ax, c="tab:grey", wait=0)
+    mark_points(L, ax, c="tab:green", wait=0)
+    link_points(L, ax, c="g", wait=0)
+    mark_points(U, ax, c="tab:green", wait=0)
+    link_points(U, ax, c="g", wait=1.5)
+
+    # remove duplicate points, last of each is the first of the other
+    L.pop()
+    U.pop()
+
+    return L + U
+
 
 if __name__ == '__main__':
     S = [Point(-1, 0), Point(0, 1), Point(-1/math.sqrt(2), -1/math.sqrt(2)),
@@ -265,6 +351,7 @@ if __name__ == '__main__':
     # removeLines(lines)
     # markPoints([Point(-1,0), Point(0,1)])
 
-    print(quickhull(S))
+    # print(quickhull(S))
     # print(jarvis(S))
-    print(divideConquer0(S))
+    # print(divideConquer0(S))
+    print(andrew_animated(S))
