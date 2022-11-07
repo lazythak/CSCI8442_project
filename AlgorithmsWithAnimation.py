@@ -156,7 +156,7 @@ def findquickhull(S: List[Point], a, b) -> List[Point]:
 
 # Jarvis Algorithm
 def jarvis(S: List[Point]) -> List[Point]:
-    (_, ax) = new_plot()
+    (fig, ax) = new_plot()
 
     plot_points(S, ax, c="tab:grey", wait=1)
 
@@ -201,6 +201,8 @@ def jarvis(S: List[Point]) -> List[Point]:
     plot_points(S, ax, c="tab:grey", wait=0)
     mark_points(P, ax, c="tab:green", wait=0)
     link_points(P, ax, c="g", wait=1)
+
+    plt.close(fig)
 
     return P[0:-1]
 
@@ -336,7 +338,7 @@ def andrew_animated(S: List[Point]) -> List[Point]:
     U = []
     L = []
 
-    (_, ax) = new_plot()
+    (fig, ax) = new_plot()
     draw_andrews_state(S, U, L, None, ax, 1, False, False)
 
     # Compute lower hull
@@ -366,6 +368,8 @@ def andrew_animated(S: List[Point]) -> List[Point]:
     # remove duplicate points, last of each is the first of the other
     L.pop()
     U.pop()
+
+    plt.close(fig)
 
     return L + U
 
