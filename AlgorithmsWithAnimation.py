@@ -2,6 +2,8 @@ from typing import List, Tuple
 from primitives import *
 import matplotlib.pyplot as plt
 from animation_api import *
+import algorithms as alg
+from DatasetCreationAndTimeAnalysis import *
 
 wait = 1.5
 
@@ -386,6 +388,170 @@ def andrew_animated(S: List[Point]) -> List[Point]:
     return data
 
 
+# Chan's Algorithm with Animation
+
+
+def rtangent(v: List[Point], p: Point) -> int:
+    """computes the right, or upper, tangent from p to v.
+    Preconditions: v has size > 1, p on exterior of v
+
+    Algorithm found here, and modified to fit needs:
+    https://web.archive.org/web/20190714200906/http://geomalgorithms.com/a15-_tangents.html#tangent_PointPolyC()
+
+    Args:
+        v (List[Point]): convex polygon to find upper tangent on
+        p (Point): point to find upper tangent from
+
+    Returns:
+        int: index of point that the tangent hits in v
+    """
+    n = len(v)
+    if n == 1:
+        # case to handle when v is of size 1
+        print("Size 1 hull, short-circuit")
+        return 0
+
+    # right tangent is local maximum for ordering where points to left of line are lower than those on
+    if (alg.below(p, v[1], v[0]) and not alg.above(p, v[n-1], v[0])):
+        return 0
+
+    a = 0
+    b = n       # initial chain = [0, n], let v[n] = v[0]
+    olda = a
+    oldb = b
+    while True:
+        c: int = (a + b) // 2                       # c is midpoint
+        print(v[a:b])
+        dnC = alg.below(p, v[(c+1) % n], v[c])
+        if (dnC and not alg.above(p, v[c-1], v[c])):
+            return c  # v[c] is tangent
+
+        # no max found, continue search
+        # select either [a, c] or [c, b]
+        upA = alg.above(p, v[(a+1) % n], v[a])
+        if (upA):
+            if (dnC):
+                oldb = b
+                olda = a
+                b = c
+            else:
+                if (alg.above(p, v[a], v[c])):
+                    oldb = b
+                    olda = a
+                    b = c
+                else:
+                    olda = a
+                    oldb = b
+                    a = c
+        else:
+            if not dnC:
+                olda = a
+                oldb = b
+                a = c
+            else:
+                if alg.below(p, v[a], v[c]):
+                    oldb = b
+                    olda = a
+                    b = c
+                else:
+                    olda = a
+                    oldb = b
+                    a = c
+
+        if (olda == a and oldb == b):
+            # Error case, should not happen.
+            # Known causes: p is in v, or p is colinear with all points in v
+            print(".....................LOOP")
+            return 0
+
+
+def to_points(P: List[Tuple[int, int]], SH: List[List[Point]]) -> List[Point]:
+    out = []
+    for (h, p) in P:
+        out.append(SH[h][p])
+    return out
+
+
+def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
+    partitions: List[List[Point]] = alg.partition_list(S, m)
+    subhulls: List[List[Point]] = []
+
+    clear(ax)
+    plot_points(S, ax, c="tab:grey", wait=1)
+
+    for i in range(0, len(partitions)):
+        subhulls.append(andrew_core(partitions[i], "tab:grey", colors[i % len(
+            colors)], colors[i % len(colors)], ax, "xkcd:light grey", S))
+
+    # P[0] is the rightmost point, which we know must be on the hull
+    P = [alg.subhull_rightmost(subhulls)]
+
+    for k in range(0, H):
+        clear(ax)
+        plot_points(S, ax, c="tab:grey", wait=0)
+        for (i, subhull) in enumerate(subhulls):
+            mark_points(subhull, ax, c=colors[i %
+                        len(colors)], s=100, wait=0)
+            link_points(subhull, ax, c=colors[i % len(colors)], wait=0)
+            link_points([subhull[0], subhull[-1]], ax,
+                        c=colors[i % len(colors)], wait=0)
+        mark_points(to_points(P, subhulls), ax, c="tab:green", wait=0)
+        link_points(to_points(P, subhulls), ax, c="g", wait=0)
+        mark_points(to_points(P[-1:], subhulls), ax, c="tab:blue", wait=1)
+
+        q: List[Tuple[int, int]] = []  # point
+        (ch, cp) = P[-1]  # hull and point indices of most recent point on hull
+        for i in range(0, len(subhulls)):
+            if ch == i:
+                # Special case, most recent point is on this hull, get next element on this subhull
+                if len(subhulls[i]) != 1:
+                    # If the size is one, then that's the point we're currently at. Don't want to
+                    # get the current point, so just skip this subhull in this case
+                    q.append((i, (cp + 1) % len(subhulls[i])))
+            else:
+                q.append((i, rtangent(subhulls[i], subhulls[ch][cp])))
+
+        mark_points(to_points(q, subhulls), ax, c="tab:orange", wait=1)
+
+        # append point with max angle from q, use step of jarvis march
+        (eh, ep) = q[0]
+        for (ph, pp) in q:
+            (ch, cp) = P[-1]
+            if (subhulls[eh][ep] == subhulls[ch][cp]) or (sidedness(DLine(subhulls[ch][cp], subhulls[eh][ep]), subhulls[ph][pp]) < 0):
+                eh = ph
+                ep = pp
+        P.append((eh, ep))
+
+        if P[-1] == P[0]:
+            return to_points(P, subhulls)
+
+    clear(ax)
+    plot_points(S, ax, c="tab:grey", wait=0)
+    mark_points(to_points(P, subhulls), ax, c="tab:red", wait=0)
+    link_points(to_points(P, subhulls), ax, c="r", wait=1)
+
+    return []  # "incomplete"
+
+
+def chan(S: List[Point]) -> List[Point]:
+    (fig, ax) = new_plot()
+
+    for t in range(1, len(S)):
+        print(f"~~~~Step: {t}~~~~~~~~~")
+        m = min(len(S), pow(2, pow(2, t)))
+        L = chan_step(S, m, m, ax)
+
+        clear(ax)
+        plot_points(S, ax, c="tab:grey", wait=0)
+
+        if L != []:
+            mark_points(L, ax, c="tab:green", wait=0)
+            link_points(L, ax, c="g", wait=1)
+            return L[0:-1]
+        pause(1)
+
+    return []  # Error case, should never be reached
+
 
 if __name__ == '__main__':
     S = [Point(-1, 0), Point(0, 1), Point(-1/math.sqrt(2), -1/math.sqrt(2)),
@@ -399,6 +565,8 @@ if __name__ == '__main__':
     # markPoints([Point(-1,0), Point(0,1)])
 
     # print(quickhull(S))
-    print(jarvis(S))
+    # print(jarvis(S))
     # print(divideConquer0(S))
     # print(andrew_animated(S))
+    data = CreateCircleDataset(50, 8)
+    print(chan(S))
