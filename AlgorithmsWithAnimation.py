@@ -283,7 +283,7 @@ def divideConquer0(S: List[Point]) -> List[Point]:
 # Andrew's Algorithm, Animated
 
 
-def draw_andrews_state(S, U, L, p: Point | None, ax, wait, L_complete, U_complete):
+def draw_andrews_state(S, U, L, p, ax, wait, L_complete, U_complete, c1, c2, c3, c4=None, Extra=[]):
     """Draws the current state of andrews algorithm
 
     Args:
@@ -298,11 +298,12 @@ def draw_andrews_state(S, U, L, p: Point | None, ax, wait, L_complete, U_complet
     """
 
     clear(ax)
-    plot_points(S, ax, c="tab:grey", wait=0)
+    plot_points(Extra, ax, c=c4, wait=0)
+    plot_points(S, ax, c=c1, wait=0)
 
     if L_complete:
-        mark_points(L, ax, c="tab:green", wait=0)
-        link_points(L, ax, c="g", wait=0)
+        mark_points(L, ax, c=c2, wait=0)
+        link_points(L, ax, c=c3, wait=0)
     else:
         mark_points(L, ax, c="tab:orange", wait=0)
         link_points(L, ax, c="k", wait=0)
@@ -311,8 +312,8 @@ def draw_andrews_state(S, U, L, p: Point | None, ax, wait, L_complete, U_complet
                 link_points([L[-1], p], ax, c="y", wait=0)
 
     if U_complete:
-        mark_points(U, ax, c="tab:green", wait=0)
-        link_points(U, ax, c="g", wait=0)
+        mark_points(U, ax, c=c2, wait=0)
+        link_points(U, ax, c=c3, wait=0)
     else:
         mark_points(U, ax, c="tab:orange", wait=0)
         link_points(U, ax, c="k", wait=0)
@@ -322,14 +323,14 @@ def draw_andrews_state(S, U, L, p: Point | None, ax, wait, L_complete, U_complet
 
     if p is not None:
         if L_complete:
-            mark_point(S[-1], ax, c="tab:green", wait=0)
-        mark_point(S[0], ax, c="tab:green", wait=0)
+            mark_point(S[-1], ax, c=c2, wait=0)
+        mark_point(S[0], ax, c=c2, wait=0)
         mark_point(p, ax, c="tab:blue", wait=0)
 
     pause(wait)
 
 
-def andrew_animated(S: List[Point]) -> List[Point]:
+def andrew_core(S: List[Point], c1, c2, c3, ax, c4=None, Extra=[]) -> List[Point]:
     if len(S) <= 1:
         # Cover the case where the input set has one or zero points
         return S.copy()
@@ -338,40 +339,52 @@ def andrew_animated(S: List[Point]) -> List[Point]:
     U = []
     L = []
 
-    (fig, ax) = new_plot()
-    draw_andrews_state(S, U, L, None, ax, 1, False, False)
+    draw_andrews_state(S, U, L, None, ax, 1, False,
+                       False, c1, c2, c3, c4, Extra)
 
     # Compute lower hull
     for p in S:
-        draw_andrews_state(S, U, L, p, ax, 1, False, False)
+        draw_andrews_state(S, U, L, p, ax, 1, False,
+                           False, c1, c2, c3, c4, Extra)
 
         while len(L) >= 2 and turn(L[-2], L[-1], p) <= 0:
             L.pop()
-            draw_andrews_state(S, U, L, p, ax, 1, False, False)
+            draw_andrews_state(S, U, L, p, ax, 1, False,
+                               False, c1, c2, c3, c4, Extra)
 
         L.append(p)
 
-    draw_andrews_state(S, U, L, None, ax, 1, True, False)
+    draw_andrews_state(S, U, L, None, ax, 1, True,
+                       False, c1, c2, c3, c4, Extra)
 
     # Compute upper hull
     for p in reversed(S):
-        draw_andrews_state(S, U, L, p, ax, 1, True, False)
+        draw_andrews_state(S, U, L, p, ax, 1, True,
+                           False, c1, c2, c3, c4, Extra)
 
         while len(U) >= 2 and turn(U[-2], U[-1], p) <= 0:
             U.pop()
-            draw_andrews_state(S, U, L, p, ax, 1, True, False)
+            draw_andrews_state(S, U, L, p, ax, 1, True,
+                               False, c1, c2, c3, c4, Extra)
 
         U.append(p)
 
-    draw_andrews_state(S, U, L, None, ax, 1.5, True, True)
+    draw_andrews_state(S, U, L, None, ax, 1.5, True,
+                       True, c1, c2, c3, c4, Extra)
 
     # remove duplicate points, last of each is the first of the other
     L.pop()
     U.pop()
 
-    plt.close(fig)
-
     return L + U
+
+
+def andrew_animated(S: List[Point]) -> List[Point]:
+    (fig, ax) = new_plot()
+    data = andrew_core(S, "tab:grey", "tab:green", "g", ax)
+    plt.close(fig)
+    return data
+
 
 
 if __name__ == '__main__':
