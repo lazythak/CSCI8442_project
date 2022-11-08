@@ -8,6 +8,8 @@ from primitives import *
 
 WAIT = 1.5
 
+colors = ["tab:purple", "tab:pink", "tab:cyan", "tab:brown", 'k']
+
 
 def new_plot() -> Tuple[fgr.Figure, axes.Axes]:
     """Wrapper around plt.subplots
