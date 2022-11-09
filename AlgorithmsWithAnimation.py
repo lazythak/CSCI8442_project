@@ -421,7 +421,6 @@ def rtangent(v: List[Point], p: Point) -> int:
     oldb = b
     while True:
         c: int = (a + b) // 2                       # c is midpoint
-        print(v[a:b])
         dnC = alg.below(p, v[(c+1) % n], v[c])
         if (dnC and not alg.above(p, v[c-1], v[c])):
             return c  # v[c] is tangent
@@ -513,13 +512,34 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
 
         mark_points(to_points(q, subhulls), ax, c="tab:orange", wait=1)
 
+        clear(ax)
+        plot_points(S, ax, c="xkcd:light grey", wait=0)
+        plot_points(to_points(q, subhulls), ax, c="tab:grey", wait=0)
+        mark_points(to_points(P, subhulls), ax, c="tab:green", wait=0)
+        link_points(to_points(P, subhulls), ax, c="g", wait=1)
+
         # append point with max angle from q, use step of jarvis march
         (eh, ep) = q[0]
         for (ph, pp) in q:
             (ch, cp) = P[-1]
+
+            clear(ax)
+            plot_points(S, ax, c="xkcd:light grey", wait=0)
+            plot_points(to_points(q, subhulls), ax, c="tab:grey", wait=0)
+            mark_points(to_points(P, subhulls), ax, c="tab:green", wait=0)
+            link_points(to_points(P, subhulls), ax, c="g", wait=0)
+            mark_point(subhulls[ph][pp], ax, c="tab:blue", wait=0)
+            draw_line(subhulls[ch][cp], subhulls[eh][ep], ax, c="m", wait=0)
+            link_points([subhulls[ch][cp], subhulls[eh][ep]],
+                        ax, c="y", wait=0)
+            mark_point(subhulls[eh][ep], ax, c="tab:orange", wait=1)
+
             if (subhulls[eh][ep] == subhulls[ch][cp]) or (sidedness(DLine(subhulls[ch][cp], subhulls[eh][ep]), subhulls[ph][pp]) < 0):
+                mark_point(subhulls[ph][pp], ax, c="tab:olive", wait=1)
                 eh = ph
                 ep = pp
+            else:
+                mark_point(subhulls[ph][pp], ax, c="tab:red", wait=1)
         P.append((eh, ep))
 
         if P[-1] == P[0]:
@@ -569,4 +589,4 @@ if __name__ == '__main__':
     # print(divideConquer0(S))
     # print(andrew_animated(S))
     data = CreateCircleDataset(50, 8)
-    print(chan(S))
+    print(chan(data))
