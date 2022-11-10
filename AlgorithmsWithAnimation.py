@@ -8,24 +8,6 @@ from DatasetCreationAndTimeAnalysis import *
 wait = 1.5
 
 
-def leftmost(S: List[Point]) -> Point:
-    left = S[0]
-    for p in S[1:]:
-        if p.x < left.x:
-            left = p
-
-    return left
-
-
-def rightmost(S: List[Point]) -> Point:
-    right = S[0]
-    for p in S[1:]:
-        if p.x > right.x:
-            right = p
-
-    return right
-
-
 def leftmostWithInd(S: List[Point]) -> Tuple[Point, int]:
     left = S[0]
     left_ind = 0
@@ -104,8 +86,8 @@ def markPoints(S):
 def quickhull(S: List[Point]) -> List[Point]:
     scttr(S)
     P = []
-    a = leftmost(S)
-    b = rightmost(S)
+    a = alg.leftmost(S)
+    b = alg.rightmost(S)
     markPoints([a, b])
     connectPoints([a, b])
     S1 = []
@@ -162,7 +144,7 @@ def jarvis(S: List[Point]) -> List[Point]:
 
     plot_points(S, ax, c="tab:grey", wait=1)
 
-    pointOnHull = leftmost(S)  # linear cost scan
+    pointOnHull = alg.leftmost(S)  # linear cost scan
 
     clear(ax)
     plot_points(S, ax, c="tab:grey", wait=1)

@@ -5,10 +5,19 @@ from primitives import *
 def leftmost(S: List[Point]) -> Point:
     left = S[0]
     for p in S[1:]:
-        if p.x < left.x:
+        if (p.x, p.y) < (left.x, left.y):
             left = p
 
     return left
+
+
+def rightmost(S: List[Point]) -> Point:
+    right = S[0]
+    for p in S[1:]:
+        if (p.x, p.y) > (right.x, right.y):
+            right = p
+
+    return right
 
 
 def jarvis(S: List[Point]) -> List[Point]:
