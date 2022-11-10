@@ -279,7 +279,7 @@ def divideConquer(S: List[Point]) -> List[Point]:
 
 
 def divideConquer0(S: List[Point]) -> List[Point]:
-    S = sorted(S, key=lambda z: z.x)
+    S = sorted(S, key=lambda z: (z.x, z.y))
     return divideConquer(S)
 
 # Andrew's Algorithm, Animated
