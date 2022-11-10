@@ -391,7 +391,7 @@ def andrew_animated(S: List[Point]) -> List[Point]:
 # Chan's Algorithm with Animation
 
 
-def rtangent(v: List[Point], p: Point) -> int:
+def rtangent_animated(v: List[Point], p: Point, ci: int, Extra: List[Point], ax) -> int:
     """computes the right, or upper, tangent from p to v.
     Preconditions: v has size > 1, p on exterior of v
 
@@ -401,10 +401,23 @@ def rtangent(v: List[Point], p: Point) -> int:
     Args:
         v (List[Point]): convex polygon to find upper tangent on
         p (Point): point to find upper tangent from
+        ci (int): index into colors list to use
+        Extra (List[Point]): Extra points to plot
+        ax (_type_): axes to plot points on
 
     Returns:
         int: index of point that the tangent hits in v
     """
+
+    clr = colors[ci % len(colors)]
+
+    clear(ax)
+    plot_points(Extra, ax, c="xkcd:light grey", wait=0)
+    mark_points(v, ax, c=clr, wait=0)
+    link_points(v, ax, c=clr, wait=0)
+    link_points([v[0], v[-1]], ax, c=clr, wait=0)
+    mark_point(p, ax, c="tab:green", wait=1)
+
     n = len(v)
     if n == 1:
         # case to handle when v is of size 1
@@ -413,16 +426,42 @@ def rtangent(v: List[Point], p: Point) -> int:
 
     # right tangent is local maximum for ordering where points to left of line are lower than those on
     if (alg.below(p, v[1], v[0]) and not alg.above(p, v[n-1], v[0])):
+        clear(ax)
+        plot_points(Extra, ax, c="xkcd:light grey", wait=0)
+        mark_points(v, ax, c=clr, wait=0)
+        link_points(v, ax, c=clr, wait=0)
+        link_points([v[0], v[-1]], ax, c=clr, wait=0)
+        mark_point(p, ax, c="tab:green", wait=0)
+        mark_point(v[0], ax, c="tab:orange", wait=1)
+
         return 0
 
     a = 0
     b = n       # initial chain = [0, n], let v[n] = v[0]
     olda = a
     oldb = b
+
     while True:
         c: int = (a + b) // 2                       # c is midpoint
+
+        clear(ax)
+        plot_points(Extra, ax, c="xkcd:light grey", wait=0)
+        plot_points(v, ax, c="tab:grey", wait=0)
+        mark_points(v[a:b], ax, c=clr, wait=0)
+        link_points(v[a:b], ax, c=clr, wait=0)
+        mark_point(p, ax, c="tab:green", wait=0)
+        mark_point(v[c], ax, c="tab:blue", wait=0)
+        draw_line(v[c], p, ax, c="y", wait=1)
+
         dnC = alg.below(p, v[(c+1) % n], v[c])
         if (dnC and not alg.above(p, v[c-1], v[c])):
+            clear(ax)
+            plot_points(Extra, ax, c="xkcd:light grey", wait=0)
+            plot_points(v, ax, c="tab:grey", wait=0)
+            mark_points(v[a:b], ax, c=clr, wait=0)
+            link_points(v[a:b], ax, c=clr, wait=0)
+            mark_point(p, ax, c="tab:green", wait=0)
+            mark_point(v[c], ax, c="tab:orange", wait=1)
             return c  # v[c] is tangent
 
         # no max found, continue search
@@ -500,9 +539,33 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
                     # If the size is one, then that's the point we're currently at. Don't want to
                     # get the current point, so just skip this subhull in this case
                     q.append((i, (cp + 1) % len(subhulls[i])))
-            else:
-                q.append((i, rtangent(subhulls[i], subhulls[ch][cp])))
 
+                    clear(ax)
+                    plot_points(S, ax, c="xkcd:light grey", wait=0)
+                    mark_points(subhulls[i], ax,
+                                c=colors[i % len(colors)], wait=0)
+                    link_points(subhulls[i], ax,
+                                c=colors[i % len(colors)], wait=0)
+                    link_points([subhulls[i][0], subhulls[i][-1]],
+                                ax, c=colors[i % len(colors)], wait=0)
+                    mark_point(subhulls[ch][cp], ax, c="tab:green", wait=1)
+                    mark_points(alg.to_points([q[-1]], subhulls),
+                                ax, c="tab:orange", wait=1)
+            else:
+                q.append((i, rtangent_animated(
+                    subhulls[i], subhulls[ch][cp], i, S, ax)))
+
+        clear(ax)
+        plot_points(S, ax, c="tab:grey", wait=0)
+        for (i, subhull) in enumerate(subhulls):
+            mark_points(subhull, ax, c=colors[i %
+                        len(colors)], s=100, wait=0)
+            link_points(subhull, ax, c=colors[i % len(colors)], wait=0)
+            link_points([subhull[0], subhull[-1]], ax,
+                        c=colors[i % len(colors)], wait=0)
+        mark_points(alg.to_points(P, subhulls), ax, c="tab:green", wait=0)
+        link_points(alg.to_points(P, subhulls), ax, c="g", wait=0)
+        mark_points(alg.to_points(P[-1:], subhulls), ax, c="tab:blue", wait=0)
         mark_points(alg.to_points(q, subhulls), ax, c="tab:orange", wait=1)
 
         clear(ax)
