@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union
 from primitives import *
 import matplotlib.pyplot as plt
 from animation_api import *
@@ -195,10 +195,24 @@ def jarvis(S: List[Point]) -> List[Point]:
 
 # Divide and Conquer
 
-def combine(S1, S2):
+def combine(S1: List[Point], S2: List[Point], ax, extra=[]):
     # Upper half
-    p1, i1 = rightmostWithInd(S1)
-    p2, i2 = leftmostWithInd(S2)
+    _, i1 = rightmostWithInd(S1)
+    _, i2 = leftmostWithInd(S2)
+
+    linex = (S1[i1].x + S2[i2].x)/2
+    line = [Point(linex, 0), Point(linex, 1)]
+
+    clear(ax)
+    plot_points(extra, ax, c="tab:grey", wait=0)
+    draw_line(line[0], line[1], ax, c='k', wait=0)
+    mark_points(S1, ax, c="xkcd:blue", wait=0)
+    link_points(S1, ax, c="xkcd:blue", wait=0)
+    link_points([S1[0], S1[-1]], ax, c="xkcd:blue", wait=0)
+    mark_points(S2, ax, c="xkcd:purple", wait=0)
+    link_points(S2, ax, c="xkcd:purple", wait=0)
+    link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=1)
+    link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
 
     go_on = True
     while go_on:
@@ -207,6 +221,17 @@ def combine(S1, S2):
             if sidedness_i(DLine(S1[i1], S2[i2]), S2[(i2-1) % len(S2)]) == 1:
                 go_on = True
                 i2 = (i2-1) % len(S2)
+
+                clear(ax)
+                plot_points(extra, ax, c="tab:grey", wait=0)
+                draw_line(line[0], line[1], ax, c='k', wait=0)
+                mark_points(S1, ax, c="xkcd:blue", wait=0)
+                link_points(S1, ax, c="xkcd:blue", wait=0)
+                link_points([S1[0], S1[-1]], ax, c="xkcd:blue", wait=0)
+                mark_points(S2, ax, c="xkcd:purple", wait=0)
+                link_points(S2, ax, c="xkcd:purple", wait=0)
+                link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
+                link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
             else:
                 break
 
@@ -214,14 +239,38 @@ def combine(S1, S2):
             if sidedness_i(DLine(S2[i2], S1[i1]), S1[(i1+1) % len(S1)]) == -1:
                 go_on = True
                 i1 = (i1+1) % len(S1)
+
+                clear(ax)
+                plot_points(extra, ax, c="tab:grey", wait=0)
+                draw_line(line[0], line[1], ax, c='k', wait=0)
+                mark_points(S1, ax, c="xkcd:blue", wait=0)
+                link_points(S1, ax, c="xkcd:blue", wait=0)
+                link_points([S1[0], S1[-1]], ax, c="xkcd:blue", wait=0)
+                mark_points(S2, ax, c="xkcd:purple", wait=0)
+                link_points(S2, ax, c="xkcd:purple", wait=0)
+                link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
+                link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
             else:
                 break
+
     left_up = i1
     right_up = i2
 
     # Lower half
-    p1, i1 = rightmostWithInd(S1)
-    p2, i2 = leftmostWithInd(S2)
+    _, i1 = rightmostWithInd(S1)
+    _, i2 = leftmostWithInd(S2)
+
+    clear(ax)
+    plot_points(extra, ax, c="tab:grey", wait=0)
+    draw_line(line[0], line[1], ax, c='k', wait=0)
+    mark_points(S1, ax, c="xkcd:blue", wait=0)
+    link_points(S1, ax, c="xkcd:blue", wait=0)
+    link_points([S1[0], S1[-1]], ax, c="xkcd:blue", wait=0)
+    mark_points(S2, ax, c="xkcd:purple", wait=0)
+    link_points(S2, ax, c="xkcd:purple", wait=0)
+    link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
+    link_points([S1[left_up], S2[right_up]], ax, c="xkcd:blue green", wait=1)
+    link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
 
     go_on = True
     while go_on:
@@ -230,6 +279,19 @@ def combine(S1, S2):
             if sidedness_i(DLine(S1[i1], S2[i2]), S2[(i2 + 1) % len(S2)]) == -1:
                 go_on = True
                 i2 = (i2 + 1) % len(S2)
+
+                clear(ax)
+                plot_points(extra, ax, c="tab:grey", wait=0)
+                draw_line(line[0], line[1], ax, c='k', wait=0)
+                mark_points(S1, ax, c="xkcd:blue", wait=0)
+                link_points(S1, ax, c="xkcd:blue", wait=0)
+                link_points([S1[0], S1[-1]], ax, c="xkcd:blue", wait=0)
+                mark_points(S2, ax, c="xkcd:purple", wait=0)
+                link_points(S2, ax, c="xkcd:purple", wait=0)
+                link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
+                link_points([S1[left_up], S2[right_up]],
+                            ax, c="xkcd:blue green", wait=0)
+                link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
             else:
                 break
 
@@ -237,10 +299,36 @@ def combine(S1, S2):
             if sidedness_i(DLine(S2[i2], S1[i1]), S1[(i1 - 1) % len(S1)]) == 1:
                 go_on = True
                 i1 = (i1 - 1) % len(S1)
+
+                clear(ax)
+                plot_points(extra, ax, c="tab:grey", wait=0)
+                draw_line(line[0], line[1], ax, c='k', wait=0)
+                mark_points(S1, ax, c="xkcd:blue", wait=0)
+                link_points(S1, ax, c="xkcd:blue", wait=0)
+                link_points([S1[0], S1[-1]], ax, c="xkcd:blue", wait=0)
+                mark_points(S2, ax, c="xkcd:purple", wait=0)
+                link_points(S2, ax, c="xkcd:purple", wait=0)
+                link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
+                link_points([S1[left_up], S2[right_up]],
+                            ax, c="xkcd:blue green", wait=0)
+                link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
             else:
                 break
     left_down = i1
     right_down = i2
+
+    clear(ax)
+    plot_points(extra, ax, c="tab:grey", wait=0)
+    draw_line(line[0], line[1], ax, c='k', wait=0)
+    mark_points(S1, ax, c="xkcd:blue", wait=0)
+    link_points(S1, ax, c="xkcd:blue", wait=0)
+    link_points([S1[0], S1[-1]], ax, c="xkcd:blue", wait=0)
+    mark_points(S2, ax, c="xkcd:purple", wait=0)
+    link_points(S2, ax, c="xkcd:purple", wait=0)
+    link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
+    link_points([S1[left_up], S2[right_up]], ax, c="xkcd:blue green", wait=0)
+    link_points([S1[left_down], S2[right_down]],
+                ax, c="xkcd:blue green", wait=1)
 
     P = []
     if left_up > left_down:
@@ -252,19 +340,49 @@ def combine(S1, S2):
         right_up = right_up+len(S2)
     for j in range(right_down, right_up+1):
         P.append(S2[(j % len(S2))])
+
+    clear(ax)
+    plot_points(extra, ax, c="tab:grey", wait=0)
+    draw_line(line[0], line[1], ax, c='k', wait=0)
+    mark_points(P, ax, c="xkcd:blue green", wait=0)
+    link_points(P, ax, c="xkcd:blue green", wait=0)
+    link_points([P[0], P[-1]], ax, c="xkcd:blue green", wait=1)
+
     return (P)
 
 
-def divideConquer(S: List[Point]) -> List[Point]:
+def divideConquer(S: List[Point], extra: List[Point] = [], ax: Union[axes.Axes, None] = None) -> List[Point]:
     if len(S) <= 1:
         return S
     else:
-        return combine(divideConquer(S[0:len(S)//2]), divideConquer(S[len(S)//2:len(S)]))
+        if ax is None:
+            (fig, ax) = new_plot()
+        else:
+            fig = None
+
+        clear(ax)
+        plot_points(extra, ax, c="xkcd:light grey", wait=0)
+        plot_points(S, ax, c="tab:grey", wait=0)
+        x = (S[len(S)//2].x + S[(len(S)//2)-1].x)/2
+        draw_line(Point(x, 0),
+                  Point(x, 1), ax, c="k", wait=1)
+
+        out = combine(divideConquer(S[0:len(S)//2], extra, ax),
+                      divideConquer(S[len(S)//2:len(S)], extra, ax), ax, extra)
+        if fig is not None:
+            clear(ax)
+            plot_points(S, ax, c="tab:grey", wait=0)
+            draw_line(Point(x, 0), Point(x, 1), ax, c="k", wait=0)
+            mark_points(out, ax, c="tab:green", wait=0)
+            link_points(out, ax, c="g", wait=0)
+            link_points([out[0], out[-1]], ax, c="g", wait=1)
+            plt.close(fig)
+        return out
 
 
 def divideConquer0(S: List[Point]) -> List[Point]:
     S = sorted(S, key=lambda z: (z.x, z.y))
-    return divideConquer(S)
+    return divideConquer(S, S)
 
 # Andrew's Algorithm, Animated
 
@@ -628,5 +746,5 @@ if __name__ == '__main__':
     # print(jarvis(S))
     # print(divideConquer0(S))
     # print(andrew_animated(S))
-    data = CreateCircleDataset(50, 8)
-    print(quickhull(S3))
+    data = CreateCircleDataset(15, 8)
+    print(divideConquer0(S))
