@@ -93,6 +93,13 @@ def above(c: Point, to: Point, frm: Point) -> bool:
     return angular_about_point(c, to, frm) < 0
 
 
+def to_points(P: List[Tuple[int, int]], SH: List[List[Point]]) -> List[Point]:
+    out = []
+    for (h, p) in P:
+        out.append(SH[h][p])
+    return out
+
+
 def rtangent(v: List[Point], p: Point) -> int:
     """computes the right, or upper, tangent from p to v.
     Preconditions: v has size > 1, p on exterior of v
@@ -210,10 +217,7 @@ def chan_step(S: List[Point], m: int, H: int) -> List[Point]:
         print(f"Added {subhulls[eh][ep]} to hull.\n")
 
         if P[-1] == P[0]:
-            out: List[Point] = []
-            for (h, p) in P[0:-1]:
-                out.append(subhulls[h][p])
-            return out
+            return to_points(P[0:-1], subhulls)
 
     return []  # "incomplete"
 

@@ -464,13 +464,6 @@ def rtangent(v: List[Point], p: Point) -> int:
             return 0
 
 
-def to_points(P: List[Tuple[int, int]], SH: List[List[Point]]) -> List[Point]:
-    out = []
-    for (h, p) in P:
-        out.append(SH[h][p])
-    return out
-
-
 def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
     partitions: List[List[Point]] = alg.partition_list(S, m)
     subhulls: List[List[Point]] = []
@@ -494,9 +487,9 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
             link_points(subhull, ax, c=colors[i % len(colors)], wait=0)
             link_points([subhull[0], subhull[-1]], ax,
                         c=colors[i % len(colors)], wait=0)
-        mark_points(to_points(P, subhulls), ax, c="tab:green", wait=0)
-        link_points(to_points(P, subhulls), ax, c="g", wait=0)
-        mark_points(to_points(P[-1:], subhulls), ax, c="tab:blue", wait=1)
+        mark_points(alg.to_points(P, subhulls), ax, c="tab:green", wait=0)
+        link_points(alg.to_points(P, subhulls), ax, c="g", wait=0)
+        mark_points(alg.to_points(P[-1:], subhulls), ax, c="tab:blue", wait=1)
 
         q: List[Tuple[int, int]] = []  # point
         (ch, cp) = P[-1]  # hull and point indices of most recent point on hull
@@ -510,13 +503,13 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
             else:
                 q.append((i, rtangent(subhulls[i], subhulls[ch][cp])))
 
-        mark_points(to_points(q, subhulls), ax, c="tab:orange", wait=1)
+        mark_points(alg.to_points(q, subhulls), ax, c="tab:orange", wait=1)
 
         clear(ax)
         plot_points(S, ax, c="xkcd:light grey", wait=0)
-        plot_points(to_points(q, subhulls), ax, c="tab:grey", wait=0)
-        mark_points(to_points(P, subhulls), ax, c="tab:green", wait=0)
-        link_points(to_points(P, subhulls), ax, c="g", wait=1)
+        plot_points(alg.to_points(q, subhulls), ax, c="tab:grey", wait=0)
+        mark_points(alg.to_points(P, subhulls), ax, c="tab:green", wait=0)
+        link_points(alg.to_points(P, subhulls), ax, c="g", wait=1)
 
         # append point with max angle from q, use step of jarvis march
         (eh, ep) = q[0]
@@ -525,9 +518,9 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
 
             clear(ax)
             plot_points(S, ax, c="xkcd:light grey", wait=0)
-            plot_points(to_points(q, subhulls), ax, c="tab:grey", wait=0)
-            mark_points(to_points(P, subhulls), ax, c="tab:green", wait=0)
-            link_points(to_points(P, subhulls), ax, c="g", wait=0)
+            plot_points(alg.to_points(q, subhulls), ax, c="tab:grey", wait=0)
+            mark_points(alg.to_points(P, subhulls), ax, c="tab:green", wait=0)
+            link_points(alg.to_points(P, subhulls), ax, c="g", wait=0)
             mark_point(subhulls[ph][pp], ax, c="tab:blue", wait=0)
             draw_line(subhulls[ch][cp], subhulls[eh][ep], ax, c="m", wait=0)
             link_points([subhulls[ch][cp], subhulls[eh][ep]],
@@ -543,12 +536,12 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
         P.append((eh, ep))
 
         if P[-1] == P[0]:
-            return to_points(P, subhulls)
+            return alg.to_points(P, subhulls)
 
     clear(ax)
     plot_points(S, ax, c="tab:grey", wait=0)
-    mark_points(to_points(P, subhulls), ax, c="tab:red", wait=0)
-    link_points(to_points(P, subhulls), ax, c="r", wait=1)
+    mark_points(alg.to_points(P, subhulls), ax, c="tab:red", wait=0)
+    link_points(alg.to_points(P, subhulls), ax, c="r", wait=1)
 
     return []  # "incomplete"
 
