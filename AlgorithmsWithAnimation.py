@@ -30,66 +30,22 @@ def rightmostWithInd(S: List[Point]) -> Tuple[Point, int]:
     return right, right_ind
 
 
-def scttr(S: List[Point]):
-    # Scatters all the points in S
-    xcoord = []
-    ycoord = []
-    for p in S:
-        xcoord.append(p.x)
-        ycoord.append(p.y)
-    plt.scatter(xcoord, ycoord)
-    plt.draw()
-    plt.pause(wait)
-
-# def connect(p1, p2):
-#     line = plt.plot([p1.x, p2.x], [p1.y,p2.y])  #Return this line to be able to remove it in future if required
-#     plt.draw()
-#     plt.pause(1)
-#     return line
-
-
-def connectPoints(S):
-    # Connects list of points in order
-    # List should have at least two points
-    lines = []
-    for i in range(1, len(S)):
-        # Return this line to be able to remove it in future if required
-        line = plt.plot([S[i].x, S[i-1].x], [S[i].y, S[i-1].y])
-        lines.append(line)
-    plt.draw()
-    plt.pause(wait)
-    return lines
-
-# def removeLine(line):
-#     line.pop(0).remove()
-#     plt.draw()
-#     plt.pause(1)
-
-
-def removeLines(lines):
-    # Removes all the lines in the list lines
-    # Each line in lines is a plt.plot return
-    for line in lines:
-        line.pop(0).remove()
-    plt.draw()
-    plt.pause(wait)
-
-
-def markPoints(S):
-    # Highlights all the points in S
-    for p in S:
-        plt.scatter(p.x, p.y, s=200)
-    plt.draw()
-    plt.pause(wait)
-
-
 def quickhull(S: List[Point]) -> List[Point]:
-    scttr(S)
+    (fig, ax) = new_plot()
+
+    clear(ax)
+    plot_points(S, ax, c="tab:grey", wait=1)
+
     P = []
     a = alg.leftmost(S)
     b = alg.rightmost(S)
-    markPoints([a, b])
-    connectPoints([a, b])
+
+    clear(ax)
+    plot_points(S, ax, c="tab:grey", wait=0)
+    mark_point(a, ax, c="tab:green", wait=0)
+    mark_point(b, ax, c="tab:green", wait=0)
+    link_points([a, b], ax, c="y", wait=1)
+
     S1 = []
     S2 = []
     for p in S:
@@ -97,28 +53,73 @@ def quickhull(S: List[Point]) -> List[Point]:
             S1.append(p)
         elif sidedness_i(DLine(b, a), p) == -1:
             S2.append(p)
+
     P.append(a)
-    DD = findquickhull(S1, a, b)
+    DD = findquickhull(S1, a, b, S, [a], [b], ax)
     if len(DD) > 0:
         P = P+DD
     P.append(b)
-    DD = findquickhull(S2, b, a)
+    DD = findquickhull(S2, b, a, S, P, [], ax)
     if len(DD) > 0:
         P = P+DD
+
+    clear(ax)
+    plot_points(S, ax, c="tab:grey", wait=0)
+    mark_points(P, ax, c="tab:green", wait=0)
+    link_points(P, ax, c="g", wait=0)
+    link_points([P[0], P[-1]], ax, c="g", wait=1)
+
+    plt.close(fig)
+
     return P
 
 
-def findquickhull(S: List[Point], a, b) -> List[Point]:
+def findquickhull(S: List[Point], a: Point, b: Point, extra: List[Point], k1: List[Point], k2: List[Point], ax) -> List[Point]:
     P = []
     if len(S) == 0:
         return []
     else:
+
+        known = k1 + k2
+
+        clear(ax)
+        plot_points(extra, ax, c="xkcd:light grey", wait=0)
+        plot_points(S, ax, c="tab:grey", wait=0)
+        mark_points(known, ax, c="tab:green", wait=0)
+        draw_line(a, b, ax, c="m", wait=0)
+        link_points(known, ax, c="y", wait=0)
+        link_points([known[-1], known[0]], ax, c="y", wait=0)
+        mark_points([a, b], ax, c="tab:green", wait=1)
+
         farthest = S[0]
         for p in S:
-            if area(p, a, b) > area(farthest, a, b):
+            clear(ax)
+            plot_points(extra, ax, c="xkcd:light grey", wait=0)
+            plot_points(S, ax, c="tab:grey", wait=0)
+            mark_points(known, ax, c="tab:green", wait=0)
+            draw_line(a, b, ax, c="m", wait=0)
+            link_points(known, ax, c="y", wait=0)
+            link_points([known[-1], known[0]], ax, c="y", wait=0)
+            mark_points([a, b], ax, c="tab:green", wait=0)
+            mark_point(farthest, ax, c="tab:orange", wait=0)
+            mark_point(p, ax, c="tab:blue", wait=1)
+
+            if area(p, a, b) >= area(farthest, a, b):
+                mark_point(p, ax, c="tab:olive", wait=1)
                 farthest = p
-        markPoints([farthest])
-        connectPoints([a, farthest, b])
+            else:
+                mark_point(p, ax, c="tab:red", wait=1)
+
+        clear(ax)
+        plot_points(extra, ax, c="xkcd:light grey", wait=0)
+        plot_points(S, ax, c="tab:grey", wait=0)
+        mark_points(known, ax, c="tab:green", wait=0)
+        link_points(known, ax, c="y", wait=0)
+        link_points([known[-1], known[0]], ax, c="y", wait=0)
+        mark_points([a, b], ax, c="tab:green", wait=0)
+        mark_point(farthest, ax, c="tab:green", wait=0)
+        link_points([a, farthest, b], ax, c="y", wait=1)
+
         S1 = []
         S2 = []
         for p in S:
@@ -127,12 +128,13 @@ def findquickhull(S: List[Point], a, b) -> List[Point]:
             elif sidedness_i(DLine(farthest, b), p) == -1:
                 S2.append(p)
 
-        DD = findquickhull(S1, a, farthest)
+        DD = findquickhull(S1, a, farthest, extra, k1, [farthest] + k2, ax)
 
         if len(DD) > 0:
             P = P+DD
         P.append(farthest)
-        DD = findquickhull(S2, farthest, b)
+
+        DD = findquickhull(S2, farthest, b, extra, k1 + P + [farthest], k2, ax)
         if len(DD) > 0:
             P = P+DD
         return P
@@ -627,4 +629,4 @@ if __name__ == '__main__':
     # print(divideConquer0(S))
     # print(andrew_animated(S))
     data = CreateCircleDataset(50, 8)
-    print(chan(data))
+    print(quickhull(S3))
