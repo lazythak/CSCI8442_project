@@ -30,11 +30,11 @@ def rightmostWithInd(S: List[Point]) -> Tuple[Point, int]:
     return right, right_ind
 
 
-def quickhull(S: List[Point]) -> List[Point]:
+def quickhull_animated(S: List[Point], wait: float = wait) -> List[Point]:
     (fig, ax) = new_plot()
 
     clear(ax)
-    plot_points(S, ax, c="tab:grey", wait=1)
+    plot_points(S, ax, c="tab:grey", wait=wait)
 
     P = []
     a = alg.leftmost(S)
@@ -44,7 +44,7 @@ def quickhull(S: List[Point]) -> List[Point]:
     plot_points(S, ax, c="tab:grey", wait=0)
     mark_point(a, ax, c="tab:green", wait=0)
     mark_point(b, ax, c="tab:green", wait=0)
-    link_points([a, b], ax, c="y", wait=1)
+    link_points([a, b], ax, c="y", wait=wait)
 
     S1 = []
     S2 = []
@@ -55,11 +55,11 @@ def quickhull(S: List[Point]) -> List[Point]:
             S2.append(p)
 
     P.append(a)
-    DD = findquickhull(S1, a, b, S, [a], [b], ax)
+    DD = findquickhull_animated(S1, a, b, S, [a], [b], ax, wait)
     if len(DD) > 0:
         P = P+DD
     P.append(b)
-    DD = findquickhull(S2, b, a, S, P, [], ax)
+    DD = findquickhull_animated(S2, b, a, S, P, [], ax, wait)
     if len(DD) > 0:
         P = P+DD
 
@@ -67,14 +67,14 @@ def quickhull(S: List[Point]) -> List[Point]:
     plot_points(S, ax, c="tab:grey", wait=0)
     mark_points(P, ax, c="tab:green", wait=0)
     link_points(P, ax, c="g", wait=0)
-    link_points([P[0], P[-1]], ax, c="g", wait=1)
+    link_points([P[0], P[-1]], ax, c="g", wait=wait)
 
     plt.close(fig)
 
     return P
 
 
-def findquickhull(S: List[Point], a: Point, b: Point, extra: List[Point], k1: List[Point], k2: List[Point], ax) -> List[Point]:
+def findquickhull_animated(S: List[Point], a: Point, b: Point, extra: List[Point], k1: List[Point], k2: List[Point], ax, wait: float = wait) -> List[Point]:
     P = []
     if len(S) == 0:
         return []
@@ -89,7 +89,7 @@ def findquickhull(S: List[Point], a: Point, b: Point, extra: List[Point], k1: Li
         draw_line(a, b, ax, c="m", wait=0)
         link_points(known, ax, c="y", wait=0)
         link_points([known[-1], known[0]], ax, c="y", wait=0)
-        mark_points([a, b], ax, c="tab:green", wait=1)
+        mark_points([a, b], ax, c="tab:green", wait=wait)
 
         farthest = S[0]
         for p in S:
@@ -102,13 +102,13 @@ def findquickhull(S: List[Point], a: Point, b: Point, extra: List[Point], k1: Li
             link_points([known[-1], known[0]], ax, c="y", wait=0)
             mark_points([a, b], ax, c="tab:green", wait=0)
             mark_point(farthest, ax, c="tab:orange", wait=0)
-            mark_point(p, ax, c="tab:blue", wait=1)
+            mark_point(p, ax, c="tab:blue", wait=wait)
 
             if area(p, a, b) >= area(farthest, a, b):
-                mark_point(p, ax, c="tab:olive", wait=1)
+                mark_point(p, ax, c="tab:olive", wait=wait)
                 farthest = p
             else:
-                mark_point(p, ax, c="tab:red", wait=1)
+                mark_point(p, ax, c="tab:red", wait=wait)
 
         clear(ax)
         plot_points(extra, ax, c="xkcd:light grey", wait=0)
@@ -118,7 +118,7 @@ def findquickhull(S: List[Point], a: Point, b: Point, extra: List[Point], k1: Li
         link_points([known[-1], known[0]], ax, c="y", wait=0)
         mark_points([a, b], ax, c="tab:green", wait=0)
         mark_point(farthest, ax, c="tab:green", wait=0)
-        link_points([a, farthest, b], ax, c="y", wait=1)
+        link_points([a, farthest, b], ax, c="y", wait=wait)
 
         S1 = []
         S2 = []
@@ -128,28 +128,30 @@ def findquickhull(S: List[Point], a: Point, b: Point, extra: List[Point], k1: Li
             elif sidedness_i(DLine(farthest, b), p) == -1:
                 S2.append(p)
 
-        DD = findquickhull(S1, a, farthest, extra, k1, [farthest] + k2, ax)
+        DD = findquickhull_animated(S1, a, farthest, extra, k1, [
+                                    farthest] + k2, ax, wait)
 
         if len(DD) > 0:
             P = P+DD
         P.append(farthest)
 
-        DD = findquickhull(S2, farthest, b, extra, k1 + P + [farthest], k2, ax)
+        DD = findquickhull_animated(
+            S2, farthest, b, extra, k1 + P + [farthest], k2, ax, wait)
         if len(DD) > 0:
             P = P+DD
         return P
 
 
 # Jarvis Algorithm
-def jarvis(S: List[Point]) -> List[Point]:
+def jarvis_animated(S: List[Point], wait: float = wait) -> List[Point]:
     (fig, ax) = new_plot()
 
-    plot_points(S, ax, c="tab:grey", wait=1)
+    plot_points(S, ax, c="tab:grey", wait=wait)
 
     pointOnHull = alg.leftmost(S)  # linear cost scan
 
     clear(ax)
-    plot_points(S, ax, c="tab:grey", wait=1)
+    plot_points(S, ax, c="tab:grey", wait=wait)
 
     i = 0
     loop = True
@@ -167,13 +169,13 @@ def jarvis(S: List[Point]) -> List[Point]:
             mark_point(p, ax, c="tab:blue", wait=0)
             draw_line(P[-1], endpoint, ax, c="m", wait=0)
             link_points([P[-1], endpoint], ax, c="y", wait=0)
-            mark_point(endpoint, ax, c="tab:orange", wait=1)
+            mark_point(endpoint, ax, c="tab:orange", wait=wait)
 
             if (endpoint == pointOnHull) or (sidedness(DLine(P[i], endpoint), p) > 0):
-                mark_point(p, ax, c="tab:olive", wait=1)
+                mark_point(p, ax, c="tab:olive", wait=wait)
                 endpoint = p
             else:
-                mark_point(p, ax, c="tab:red", wait=1)
+                mark_point(p, ax, c="tab:red", wait=wait)
 
         i = i+1
         pointOnHull = endpoint
@@ -186,7 +188,7 @@ def jarvis(S: List[Point]) -> List[Point]:
     clear(ax)
     plot_points(S, ax, c="tab:grey", wait=0)
     mark_points(P, ax, c="tab:green", wait=0)
-    link_points(P, ax, c="g", wait=1)
+    link_points(P, ax, c="g", wait=wait)
 
     plt.close(fig)
 
@@ -195,7 +197,7 @@ def jarvis(S: List[Point]) -> List[Point]:
 
 # Divide and Conquer
 
-def combine(S1: List[Point], S2: List[Point], ax, extra=[]):
+def combine_animated(S1: List[Point], S2: List[Point], ax, wait: float = wait, extra=[]):
     # Upper half
     _, i1 = rightmostWithInd(S1)
     _, i2 = leftmostWithInd(S2)
@@ -211,8 +213,8 @@ def combine(S1: List[Point], S2: List[Point], ax, extra=[]):
     link_points([S1[0], S1[-1]], ax, c="xkcd:blue", wait=0)
     mark_points(S2, ax, c="xkcd:purple", wait=0)
     link_points(S2, ax, c="xkcd:purple", wait=0)
-    link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=1)
-    link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
+    link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=wait)
+    link_points([S1[i1], S2[i2]], ax, c="y", wait=wait)
 
     go_on = True
     while go_on:
@@ -231,7 +233,7 @@ def combine(S1: List[Point], S2: List[Point], ax, extra=[]):
                 mark_points(S2, ax, c="xkcd:purple", wait=0)
                 link_points(S2, ax, c="xkcd:purple", wait=0)
                 link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
-                link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
+                link_points([S1[i1], S2[i2]], ax, c="y", wait=wait)
             else:
                 break
 
@@ -249,7 +251,7 @@ def combine(S1: List[Point], S2: List[Point], ax, extra=[]):
                 mark_points(S2, ax, c="xkcd:purple", wait=0)
                 link_points(S2, ax, c="xkcd:purple", wait=0)
                 link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
-                link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
+                link_points([S1[i1], S2[i2]], ax, c="y", wait=wait)
             else:
                 break
 
@@ -269,8 +271,9 @@ def combine(S1: List[Point], S2: List[Point], ax, extra=[]):
     mark_points(S2, ax, c="xkcd:purple", wait=0)
     link_points(S2, ax, c="xkcd:purple", wait=0)
     link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
-    link_points([S1[left_up], S2[right_up]], ax, c="xkcd:blue green", wait=1)
-    link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
+    link_points([S1[left_up], S2[right_up]], ax,
+                c="xkcd:blue green", wait=wait)
+    link_points([S1[i1], S2[i2]], ax, c="y", wait=wait)
 
     go_on = True
     while go_on:
@@ -291,7 +294,7 @@ def combine(S1: List[Point], S2: List[Point], ax, extra=[]):
                 link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
                 link_points([S1[left_up], S2[right_up]],
                             ax, c="xkcd:blue green", wait=0)
-                link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
+                link_points([S1[i1], S2[i2]], ax, c="y", wait=wait)
             else:
                 break
 
@@ -311,7 +314,7 @@ def combine(S1: List[Point], S2: List[Point], ax, extra=[]):
                 link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
                 link_points([S1[left_up], S2[right_up]],
                             ax, c="xkcd:blue green", wait=0)
-                link_points([S1[i1], S2[i2]], ax, c="y", wait=1)
+                link_points([S1[i1], S2[i2]], ax, c="y", wait=wait)
             else:
                 break
     left_down = i1
@@ -328,7 +331,7 @@ def combine(S1: List[Point], S2: List[Point], ax, extra=[]):
     link_points([S2[0], S2[-1]], ax, c="xkcd:purple", wait=0)
     link_points([S1[left_up], S2[right_up]], ax, c="xkcd:blue green", wait=0)
     link_points([S1[left_down], S2[right_down]],
-                ax, c="xkcd:blue green", wait=1)
+                ax, c="xkcd:blue green", wait=wait)
 
     P = []
     if left_up > left_down:
@@ -346,12 +349,12 @@ def combine(S1: List[Point], S2: List[Point], ax, extra=[]):
     draw_line(line[0], line[1], ax, c='k', wait=0)
     mark_points(P, ax, c="xkcd:blue green", wait=0)
     link_points(P, ax, c="xkcd:blue green", wait=0)
-    link_points([P[0], P[-1]], ax, c="xkcd:blue green", wait=1)
+    link_points([P[0], P[-1]], ax, c="xkcd:blue green", wait=wait)
 
     return (P)
 
 
-def divideConquer(S: List[Point], extra: List[Point] = [], ax: Union[axes.Axes, None] = None) -> List[Point]:
+def divideConquer_animated(S: List[Point], wait: float = wait, extra: List[Point] = [], ax: Union[axes.Axes, None] = None) -> List[Point]:
     if len(S) <= 1:
         return S
     else:
@@ -365,29 +368,29 @@ def divideConquer(S: List[Point], extra: List[Point] = [], ax: Union[axes.Axes, 
         plot_points(S, ax, c="tab:grey", wait=0)
         x = (S[len(S)//2].x + S[(len(S)//2)-1].x)/2
         draw_line(Point(x, 0),
-                  Point(x, 1), ax, c="k", wait=1)
+                  Point(x, 1), ax, c="k", wait=wait)
 
-        out = combine(divideConquer(S[0:len(S)//2], extra, ax),
-                      divideConquer(S[len(S)//2:len(S)], extra, ax), ax, extra)
+        out = combine_animated(divideConquer_animated(S[0:len(S)//2], wait, extra, ax),
+                               divideConquer_animated(S[len(S)//2:len(S)], wait, extra, ax), ax, wait, extra)
         if fig is not None:
             clear(ax)
             plot_points(S, ax, c="tab:grey", wait=0)
             draw_line(Point(x, 0), Point(x, 1), ax, c="k", wait=0)
             mark_points(out, ax, c="tab:green", wait=0)
             link_points(out, ax, c="g", wait=0)
-            link_points([out[0], out[-1]], ax, c="g", wait=1)
+            link_points([out[0], out[-1]], ax, c="g", wait=wait)
             plt.close(fig)
         return out
 
 
-def divideConquer0(S: List[Point]) -> List[Point]:
+def divideConquer_unsorted_animated(S: List[Point], wait=wait) -> List[Point]:
     S = sorted(S, key=lambda z: (z.x, z.y))
-    return divideConquer(S, S)
+    return divideConquer_animated(S, wait, extra=S)
 
 # Andrew's Algorithm, Animated
 
 
-def draw_andrews_state(S, U, L, p, ax, wait, L_complete, U_complete, c1, c2, c3, c4=None, Extra=[]):
+def draw_andrews_state(S, U, L, p, ax, wait: float, L_complete, U_complete, c1, c2, c3, c4=None, Extra=[]):
     """Draws the current state of andrews algorithm
 
     Args:
@@ -434,7 +437,7 @@ def draw_andrews_state(S, U, L, p, ax, wait, L_complete, U_complete, c1, c2, c3,
     pause(wait)
 
 
-def andrew_core(S: List[Point], c1, c2, c3, ax, c4=None, Extra=[]) -> List[Point]:
+def andrew_core_animated(S: List[Point], c1, c2, c3, ax, wait: float, c4=None, Extra=[]) -> List[Point]:
     if len(S) <= 1:
         # Cover the case where the input set has one or zero points
         return S.copy()
@@ -443,37 +446,37 @@ def andrew_core(S: List[Point], c1, c2, c3, ax, c4=None, Extra=[]) -> List[Point
     U = []
     L = []
 
-    draw_andrews_state(S, U, L, None, ax, 1, False,
+    draw_andrews_state(S, U, L, None, ax, wait, False,
                        False, c1, c2, c3, c4, Extra)
 
     # Compute lower hull
     for p in S:
-        draw_andrews_state(S, U, L, p, ax, 1, False,
+        draw_andrews_state(S, U, L, p, ax, wait, False,
                            False, c1, c2, c3, c4, Extra)
 
         while len(L) >= 2 and turn(L[-2], L[-1], p) <= 0:
             L.pop()
-            draw_andrews_state(S, U, L, p, ax, 1, False,
+            draw_andrews_state(S, U, L, p, ax, wait, False,
                                False, c1, c2, c3, c4, Extra)
 
         L.append(p)
 
-    draw_andrews_state(S, U, L, None, ax, 1, True,
+    draw_andrews_state(S, U, L, None, ax, wait, True,
                        False, c1, c2, c3, c4, Extra)
 
     # Compute upper hull
     for p in reversed(S):
-        draw_andrews_state(S, U, L, p, ax, 1, True,
+        draw_andrews_state(S, U, L, p, ax, wait, True,
                            False, c1, c2, c3, c4, Extra)
 
         while len(U) >= 2 and turn(U[-2], U[-1], p) <= 0:
             U.pop()
-            draw_andrews_state(S, U, L, p, ax, 1, True,
+            draw_andrews_state(S, U, L, p, ax, wait, True,
                                False, c1, c2, c3, c4, Extra)
 
         U.append(p)
 
-    draw_andrews_state(S, U, L, None, ax, 1.5, True,
+    draw_andrews_state(S, U, L, None, ax, wait, True,
                        True, c1, c2, c3, c4, Extra)
 
     # remove duplicate points, last of each is the first of the other
@@ -483,9 +486,9 @@ def andrew_core(S: List[Point], c1, c2, c3, ax, c4=None, Extra=[]) -> List[Point
     return L + U
 
 
-def andrew_animated(S: List[Point]) -> List[Point]:
+def andrew_animated(S: List[Point], wait: float = wait) -> List[Point]:
     (fig, ax) = new_plot()
-    data = andrew_core(S, "tab:grey", "tab:green", "g", ax)
+    data = andrew_core_animated(S, "tab:grey", "tab:green", "g", ax, wait)
     plt.close(fig)
     return data
 
@@ -493,7 +496,7 @@ def andrew_animated(S: List[Point]) -> List[Point]:
 # Chan's Algorithm with Animation
 
 
-def rtangent_animated(v: List[Point], p: Point, ci: int, Extra: List[Point], ax) -> int:
+def rtangent_animated(v: List[Point], p: Point, ci: int, Extra: List[Point], ax, wait: float = wait) -> int:
     """computes the right, or upper, tangent from p to v.
     Preconditions: v has size > 1, p on exterior of v
 
@@ -518,7 +521,7 @@ def rtangent_animated(v: List[Point], p: Point, ci: int, Extra: List[Point], ax)
     mark_points(v, ax, c=clr, wait=0)
     link_points(v, ax, c=clr, wait=0)
     link_points([v[0], v[-1]], ax, c=clr, wait=0)
-    mark_point(p, ax, c="tab:green", wait=1)
+    mark_point(p, ax, c="tab:green", wait=wait)
 
     n = len(v)
     if n == 1:
@@ -534,7 +537,7 @@ def rtangent_animated(v: List[Point], p: Point, ci: int, Extra: List[Point], ax)
         link_points(v, ax, c=clr, wait=0)
         link_points([v[0], v[-1]], ax, c=clr, wait=0)
         mark_point(p, ax, c="tab:green", wait=0)
-        mark_point(v[0], ax, c="tab:orange", wait=1)
+        mark_point(v[0], ax, c="tab:orange", wait=wait)
 
         return 0
 
@@ -553,7 +556,7 @@ def rtangent_animated(v: List[Point], p: Point, ci: int, Extra: List[Point], ax)
         link_points(v[a:b], ax, c=clr, wait=0)
         mark_point(p, ax, c="tab:green", wait=0)
         mark_point(v[c], ax, c="tab:blue", wait=0)
-        draw_line(v[c], p, ax, c="y", wait=1)
+        draw_line(v[c], p, ax, c="y", wait=wait)
 
         dnC = alg.below(p, v[(c+1) % n], v[c])
         if (dnC and not alg.above(p, v[c-1], v[c])):
@@ -563,7 +566,7 @@ def rtangent_animated(v: List[Point], p: Point, ci: int, Extra: List[Point], ax)
             mark_points(v[a:b], ax, c=clr, wait=0)
             link_points(v[a:b], ax, c=clr, wait=0)
             mark_point(p, ax, c="tab:green", wait=0)
-            mark_point(v[c], ax, c="tab:orange", wait=1)
+            mark_point(v[c], ax, c="tab:orange", wait=wait)
             return c  # v[c] is tangent
 
         # no max found, continue search
@@ -605,16 +608,16 @@ def rtangent_animated(v: List[Point], p: Point, ci: int, Extra: List[Point], ax)
             return 0
 
 
-def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
+def chan_step_animated(S: List[Point], m: int, H: int, ax, wait: float = wait) -> List[Point]:
     partitions: List[List[Point]] = alg.partition_list(S, m)
     subhulls: List[List[Point]] = []
 
     clear(ax)
-    plot_points(S, ax, c="tab:grey", wait=1)
+    plot_points(S, ax, c="tab:grey", wait=wait)
 
     for i in range(0, len(partitions)):
-        subhulls.append(andrew_core(partitions[i], "tab:grey", colors[i % len(
-            colors)], colors[i % len(colors)], ax, "xkcd:light grey", S))
+        subhulls.append(andrew_core_animated(partitions[i], "tab:grey", colors[i % len(
+            colors)], colors[i % len(colors)], ax, wait, "xkcd:light grey", S))
 
     # P[0] is the rightmost point, which we know must be on the hull
     P = [alg.subhull_rightmost(subhulls)]
@@ -630,7 +633,8 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
                         c=colors[i % len(colors)], wait=0)
         mark_points(alg.to_points(P, subhulls), ax, c="tab:green", wait=0)
         link_points(alg.to_points(P, subhulls), ax, c="g", wait=0)
-        mark_points(alg.to_points(P[-1:], subhulls), ax, c="tab:blue", wait=1)
+        mark_points(alg.to_points(P[-1:], subhulls),
+                    ax, c="tab:blue", wait=wait)
 
         q: List[Tuple[int, int]] = []  # point
         (ch, cp) = P[-1]  # hull and point indices of most recent point on hull
@@ -650,12 +654,12 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
                                 c=colors[i % len(colors)], wait=0)
                     link_points([subhulls[i][0], subhulls[i][-1]],
                                 ax, c=colors[i % len(colors)], wait=0)
-                    mark_point(subhulls[ch][cp], ax, c="tab:green", wait=1)
+                    mark_point(subhulls[ch][cp], ax, c="tab:green", wait=wait)
                     mark_points(alg.to_points([q[-1]], subhulls),
-                                ax, c="tab:orange", wait=1)
+                                ax, c="tab:orange", wait=wait)
             else:
                 q.append((i, rtangent_animated(
-                    subhulls[i], subhulls[ch][cp], i, S, ax)))
+                    subhulls[i], subhulls[ch][cp], i, S, ax, wait)))
 
         clear(ax)
         plot_points(S, ax, c="tab:grey", wait=0)
@@ -668,13 +672,13 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
         mark_points(alg.to_points(P, subhulls), ax, c="tab:green", wait=0)
         link_points(alg.to_points(P, subhulls), ax, c="g", wait=0)
         mark_points(alg.to_points(P[-1:], subhulls), ax, c="tab:blue", wait=0)
-        mark_points(alg.to_points(q, subhulls), ax, c="tab:orange", wait=1)
+        mark_points(alg.to_points(q, subhulls), ax, c="tab:orange", wait=wait)
 
         clear(ax)
         plot_points(S, ax, c="xkcd:light grey", wait=0)
         plot_points(alg.to_points(q, subhulls), ax, c="tab:grey", wait=0)
         mark_points(alg.to_points(P, subhulls), ax, c="tab:green", wait=0)
-        link_points(alg.to_points(P, subhulls), ax, c="g", wait=1)
+        link_points(alg.to_points(P, subhulls), ax, c="g", wait=wait)
 
         # append point with max angle from q, use step of jarvis march
         (eh, ep) = q[0]
@@ -690,14 +694,14 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
             draw_line(subhulls[ch][cp], subhulls[eh][ep], ax, c="m", wait=0)
             link_points([subhulls[ch][cp], subhulls[eh][ep]],
                         ax, c="y", wait=0)
-            mark_point(subhulls[eh][ep], ax, c="tab:orange", wait=1)
+            mark_point(subhulls[eh][ep], ax, c="tab:orange", wait=wait)
 
             if (subhulls[eh][ep] == subhulls[ch][cp]) or (sidedness(DLine(subhulls[ch][cp], subhulls[eh][ep]), subhulls[ph][pp]) < 0):
-                mark_point(subhulls[ph][pp], ax, c="tab:olive", wait=1)
+                mark_point(subhulls[ph][pp], ax, c="tab:olive", wait=wait)
                 eh = ph
                 ep = pp
             else:
-                mark_point(subhulls[ph][pp], ax, c="tab:red", wait=1)
+                mark_point(subhulls[ph][pp], ax, c="tab:red", wait=wait)
         P.append((eh, ep))
 
         if P[-1] == P[0]:
@@ -706,27 +710,30 @@ def chan_step(S: List[Point], m: int, H: int, ax) -> List[Point]:
     clear(ax)
     plot_points(S, ax, c="tab:grey", wait=0)
     mark_points(alg.to_points(P, subhulls), ax, c="tab:red", wait=0)
-    link_points(alg.to_points(P, subhulls), ax, c="r", wait=1)
+    link_points(alg.to_points(P, subhulls), ax, c="r", wait=wait)
 
     return []  # "incomplete"
 
 
-def chan(S: List[Point]) -> List[Point]:
+def chan_animated(S: List[Point], wait: float = wait) -> List[Point]:
     (fig, ax) = new_plot()
 
     for t in range(1, len(S)):
         print(f"~~~~Step: {t}~~~~~~~~~")
         m = min(len(S), pow(2, pow(2, t)))
-        L = chan_step(S, m, m, ax)
+        L = chan_step_animated(S, m, m, ax, wait)
 
         clear(ax)
         plot_points(S, ax, c="tab:grey", wait=0)
 
         if L != []:
             mark_points(L, ax, c="tab:green", wait=0)
-            link_points(L, ax, c="g", wait=1)
+            link_points(L, ax, c="g", wait=wait)
+            plt.close(fig)
             return L[0:-1]
-        pause(1)
+        pause(wait)
+
+    plt.close(fig)
 
     return []  # Error case, should never be reached
 
@@ -747,4 +754,4 @@ if __name__ == '__main__':
     # print(divideConquer0(S))
     # print(andrew_animated(S))
     data = CreateCircleDataset(15, 8)
-    print(divideConquer0(S))
+    print(jarvis_animated(S, 0.2))
