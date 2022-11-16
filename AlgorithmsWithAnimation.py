@@ -5,7 +5,33 @@ from animation_api import *
 import algorithms as alg
 from DatasetCreationAndTimeAnalysis import *
 
-wait = 1.5
+wait = 1.0
+
+"""
+Use of colors in the animations:
+'tab:grey' is used as the default point color
+'xkcd:light grey' is used to show points in the set that aren't of interest or aren't available
+to the current step
+'tab:green' is used to show known-correct points, with 'g' to link them for known positioning
+'tab:orange' is used for candidate points, that are currently the best known, or are being
+considered for being on the hull
+'tab:blue' is used for the current point being examined
+'tab:red' is used for points that fail the current check, such as being on the wrong side
+of a line to move it in jarvis march, having a lower area in quickhull, or failing to converge
+in chan
+'tab:olive' is used to signify a point meets the condition being checked for, in algorithms
+like jarvis march and quickhull
+'k' and 'y' are used for line segment colors, where 'k' means the line segment isn't known to
+be right, and 'y' is used for a potential line segment during a cycle examining points.
+Other colors used to distinguish subhulls in chan's algorithm
+
+In divide and conquer, some colors are used differently, due to the algorithm functioning
+differently.
+
+The two sub-hulls are xkcd:blue and xkcd:purple, and 'y' is used for candidate tangents.
+When the tangent is known good, it changes to 'xkcd:blue green', and the merged hull is
+displayed as 'xkcd:blue green' for points and connections, after each combine step.
+"""
 
 
 def leftmostWithInd(S: List[Point]) -> Tuple[Point, int]:
