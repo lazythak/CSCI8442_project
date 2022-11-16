@@ -311,3 +311,75 @@ def findquickhull(S: List[Point], a, b) -> List[Point]:
         if len(DD) > 0:
             P = P+DD
         return P
+
+# Divide and Conquer
+
+def combine(S1, S2):
+    # Upper half
+    p1, i1 = rightmostWithInd(S1)
+    p2, i2 = leftmostWithInd(S2)
+
+    go_on = True
+    while go_on:
+        go_on = False
+        while True:
+            if sidedness_i(DLine(S1[i1],S2[i2]),S2[(i2-1)%len(S2)]) == 1:
+                go_on = True
+                i2 = (i2-1)%len(S2)
+            else:
+                break
+
+        while True:
+            if sidedness_i(DLine(S2[i2],S1[i1]),S1[(i1+1)%len(S1)]) == -1:
+                go_on = True
+                i1 = (i1+1)%len(S1)
+            else:
+                break
+    left_up = i1
+    right_up = i2
+
+    # Lower half
+    p1, i1 = rightmostWithInd(S1)
+    p2, i2 = leftmostWithInd(S2)
+
+    go_on = True
+    while go_on:
+        go_on = False
+        while True:
+            if sidedness_i(DLine(S1[i1], S2[i2]), S2[(i2 + 1) % len(S2)]) == -1:
+                go_on = True
+                i2 = (i2 + 1) % len(S2)
+            else:
+                break
+
+        while True:
+            if sidedness_i(DLine(S2[i2], S1[i1]), S1[(i1 - 1) % len(S1)]) == 1:
+                go_on = True
+                i1 = (i1 - 1) % len(S1)
+            else:
+                break
+    left_down = i1
+    right_down = i2
+
+    P = []
+    if left_up > left_down:
+        left_down = left_down+len(S1)
+    for j in range(left_up, left_down+1):
+        P.append(S1[(j%len(S1))])
+
+    if right_down > right_up:
+        right_up = right_up+len(S2)
+    for j in range(right_down, right_up+1):
+        P.append(S2[(j%len(S2))])
+    return(P)
+
+
+def divideConquer(S: List[Point]) -> List[Point]:
+    if len(S)<=1:
+        return S
+    else:
+        return combine(divideConquer(S[0:len(S)//2]), divideConquer(S[len(S)//2:len(S)]))
+
+def divideConquer0(S: List[Point]) -> List[Point]:
+    S = sorted(S, key = lambda p: p.x)
+    return divideConquer(S)
