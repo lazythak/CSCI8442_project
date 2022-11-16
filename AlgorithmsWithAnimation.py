@@ -171,7 +171,7 @@ def jarvis_animated(S: List[Point], wait: float = wait) -> List[Point]:
             link_points([P[-1], endpoint], ax, c="y", wait=0)
             mark_point(endpoint, ax, c="tab:orange", wait=wait)
 
-            if (endpoint == pointOnHull) or (sidedness(DLine(P[i], endpoint), p) > 0):
+            if (endpoint == pointOnHull) or (sidedness(DLine(P[i], endpoint), p) < 0):
                 mark_point(p, ax, c="tab:olive", wait=wait)
                 endpoint = p
             else:
