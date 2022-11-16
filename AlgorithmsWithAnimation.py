@@ -34,28 +34,6 @@ displayed as 'xkcd:blue green' for points and connections, after each combine st
 """
 
 
-def leftmostWithInd(S: List[Point]) -> Tuple[Point, int]:
-    left = S[0]
-    left_ind = 0
-    for j in range(1, len(S)):
-        if S[j].x < left.x:
-            left = S[j]
-            left_ind = j
-
-    return left, left_ind
-
-
-def rightmostWithInd(S: List[Point]) -> Tuple[Point, int]:
-    right = S[0]
-    right_ind = 0
-    for j in range(1, len(S)):
-        if S[j].x >= right.x:
-            right = S[j]
-            right_ind = j
-
-    return right, right_ind
-
-
 def quickhull_animated(S: List[Point], wait: float = wait) -> List[Point]:
     (fig, ax) = new_plot()
 
@@ -225,8 +203,8 @@ def jarvis_animated(S: List[Point], wait: float = wait) -> List[Point]:
 
 def combine_animated(S1: List[Point], S2: List[Point], ax, wait: float = wait, extra=[]):
     # Upper half
-    _, i1 = rightmostWithInd(S1)
-    _, i2 = leftmostWithInd(S2)
+    _, i1 = alg.rightmostWithInd(S1)
+    _, i2 = alg.leftmostWithInd(S2)
 
     linex = (S1[i1].x + S2[i2].x)/2
     line = [Point(linex, 0), Point(linex, 1)]
@@ -285,8 +263,8 @@ def combine_animated(S1: List[Point], S2: List[Point], ax, wait: float = wait, e
     right_up = i2
 
     # Lower half
-    _, i1 = rightmostWithInd(S1)
-    _, i2 = leftmostWithInd(S2)
+    _, i1 = alg.rightmostWithInd(S1)
+    _, i2 = alg.leftmostWithInd(S2)
 
     clear(ax)
     plot_points(extra, ax, c="tab:grey", wait=0)
