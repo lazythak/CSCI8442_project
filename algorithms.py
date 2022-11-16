@@ -20,6 +20,27 @@ def rightmost(S: List[Point]) -> Point:
     return right
 
 
+def leftmostWithInd(S: List[Point]) -> Point:
+    left = S[0]
+    left_ind = 0
+    for j in range(1,len(S)):
+        if S[j].x < left.x:
+            left = S[j]
+            left_ind = j
+
+    return left, left_ind
+
+def rightmostWithInd(S: List[Point]) -> Point:
+    right = S[0]
+    right_ind = 0
+    for j in range(1, len(S)):
+        if S[j].x >= right.x:
+            right = S[j]
+            right_ind = j
+
+    return right, right_ind
+
+
 def jarvis(S: List[Point]) -> List[Point]:
     pointOnHull = leftmost(S)  # linear cost scan
     i = 0
@@ -241,27 +262,6 @@ def chan(S: List[Point]) -> List[Point]:
     return []  # Error case, should never be reached
 
 
-
-from typing import List
-from primitives import *
-
-
-def leftmost(S: List[Point]) -> Point:
-    left = S[0]
-    for p in S[1:]:
-        if p.x < left.x:
-            left = p
-
-    return left
-
-
-def rightmost(S: List[Point]) -> Point:
-    right = S[0]
-    for p in S[1:]:
-        if p.x > right.x:
-            right = p
-
-    return right
 
 
 def quickhull(S: List[Point]) -> List[Point]:
