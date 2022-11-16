@@ -2,6 +2,8 @@ from typing import List, Tuple
 from primitives import *
 
 
+# Helpers
+
 def leftmost(S: List[Point]) -> Point:
     left = S[0]
     for p in S[1:]:
@@ -42,6 +44,8 @@ def rightmostWithInd(S: List[Point]) -> Tuple[Point, int]:
     return right, right_ind
 
 
+# Jarvis
+
 def jarvis(S: List[Point]) -> List[Point]:
     pointOnHull = leftmost(S)  # linear cost scan
     i = 0
@@ -63,6 +67,8 @@ def jarvis(S: List[Point]) -> List[Point]:
 
     return P
 
+
+# Andrew's
 
 def andrew(S: List[Point]) -> List[Point]:
     if len(S) <= 1:
@@ -91,6 +97,8 @@ def andrew(S: List[Point]) -> List[Point]:
 
     return L + U
 
+
+# Chan's
 
 def partition_list(S: List, size: int) -> List[List]:
     return [S[i: i + size] for i in range(0, len(S), size)]
@@ -263,7 +271,7 @@ def chan(S: List[Point]) -> List[Point]:
     return []  # Error case, should never be reached
 
 
-
+# Quickhull
 
 def quickhull(S: List[Point]) -> List[Point]:
     P = []
@@ -312,6 +320,7 @@ def findquickhull(S: List[Point], a, b) -> List[Point]:
         if len(DD) > 0:
             P = P+DD
         return P
+
 
 # Divide and Conquer
 
