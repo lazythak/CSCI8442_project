@@ -20,17 +20,18 @@ def rightmost(S: List[Point]) -> Point:
     return right
 
 
-def leftmostWithInd(S: List[Point]) -> Point:
+def leftmostWithInd(S: List[Point]) -> Tuple[Point, int]:
     left = S[0]
     left_ind = 0
-    for j in range(1,len(S)):
+    for j in range(1, len(S)):
         if S[j].x < left.x:
             left = S[j]
             left_ind = j
 
     return left, left_ind
 
-def rightmostWithInd(S: List[Point]) -> Point:
+
+def rightmostWithInd(S: List[Point]) -> Tuple[Point, int]:
     right = S[0]
     right_ind = 0
     for j in range(1, len(S)):
@@ -323,16 +324,16 @@ def combine(S1, S2):
     while go_on:
         go_on = False
         while True:
-            if sidedness_i(DLine(S1[i1],S2[i2]),S2[(i2-1)%len(S2)]) == 1:
+            if sidedness_i(DLine(S1[i1], S2[i2]), S2[(i2-1) % len(S2)]) == 1:
                 go_on = True
-                i2 = (i2-1)%len(S2)
+                i2 = (i2-1) % len(S2)
             else:
                 break
 
         while True:
-            if sidedness_i(DLine(S2[i2],S1[i1]),S1[(i1+1)%len(S1)]) == -1:
+            if sidedness_i(DLine(S2[i2], S1[i1]), S1[(i1+1) % len(S1)]) == -1:
                 go_on = True
-                i1 = (i1+1)%len(S1)
+                i1 = (i1+1) % len(S1)
             else:
                 break
     left_up = i1
@@ -365,17 +366,17 @@ def combine(S1, S2):
     if left_up > left_down:
         left_down = left_down+len(S1)
     for j in range(left_up, left_down+1):
-        P.append(S1[(j%len(S1))])
+        P.append(S1[(j % len(S1))])
 
     if right_down > right_up:
         right_up = right_up+len(S2)
     for j in range(right_down, right_up+1):
-        P.append(S2[(j%len(S2))])
-    return(P)
+        P.append(S2[(j % len(S2))])
+    return (P)
 
 
 def divideConquer(S: List[Point]) -> List[Point]:
-    if len(S)<=1:
+    if len(S) <= 1:
         return S
     else:
         return combine(divideConquer(S[0:len(S)//2]), divideConquer(S[len(S)//2:len(S)]))
