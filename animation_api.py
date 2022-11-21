@@ -38,6 +38,24 @@ def plot_points(S: List[Point], ax: axes.Axes, c=None, wait=WAIT):
     pause(wait)
 
 
+def plot_points(S: List[Point], ax: axes.Axes, c=None, wait=WAIT, label = ''):
+    """Plots the given points at a small size
+
+    Args:
+        S (List[Point]): The points to plot
+        ax (axes.Axes): The axes on which to plot
+        c (_type_, optional): The color with which to draw the points. Defaults to None.
+        wait (float, optional): Time to wait after drawing points. Defaults to WAIT.
+    """
+    xcoord = []
+    ycoord = []
+    for p in S:
+        xcoord.append(p.x)
+        ycoord.append(p.y)
+    ax.scatter(xcoord, ycoord, color=c, label=label)
+    pause(wait)
+ 
+    
 def mark_point(p: Point, ax: axes.Axes, s=200, c=None, wait=WAIT):
     """Draws a specific point at specified size and in specified color
 
