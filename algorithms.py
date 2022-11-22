@@ -156,14 +156,10 @@ def rtangent(v: List[Point], p: Point) -> int:
     n = len(v)
     if n == 1:
         # case to handle when v is of size 1
-        print("Size 1 hull, short-circuit")
         return 0
-
-    print(f"tangent request: {p}")
 
     # right tangent is local maximum for ordering where points to left of line are lower than those on
     if (below(p, v[1], v[0]) and not above(p, v[n-1], v[0])):
-        print(f"early exit, {v[0]}")
         return 0
 
     a = 0
@@ -172,17 +168,13 @@ def rtangent(v: List[Point], p: Point) -> int:
     oldb = b
     while True:
         c: int = (a + b) // 2                       # c is midpoint
-        print(f"a: {a}, b: {b}, c: {c}")
-        print(v[a:b])
         dnC = below(p, v[(c+1) % n], v[c])
         if (dnC and not above(p, v[c-1], v[c])):
-            print(f"Normal exit, {v[c]}")
             return c  # v[c] is tangent
 
         # no max found, continue search
         # select either [a, c] or [c, b]
         upA = above(p, v[(a+1) % n], v[a])
-        print(f"dnC: {dnC}, upA: {upA}")
         if (upA):
             if (dnC):
                 oldb = b
@@ -215,7 +207,7 @@ def rtangent(v: List[Point], p: Point) -> int:
         if (olda == a and oldb == b):
             # Error case, should not happen.
             # Known causes: p is in v, or p is colinear with all points in v
-            print(".....................LOOP")
+            # print(".....................LOOP")
             return 0
 
 
@@ -224,9 +216,6 @@ def chan_step(S: List[Point], m: int, H: int) -> List[Point]:
     subhulls: List[List[Point]] = []
     for i in range(0, len(partitions)):
         subhulls.append(andrew(partitions[i]))
-
-    print(partitions)
-    print(subhulls)
 
     # P[0] is the rightmost point, which we know must be on the hull
     P = [subhull_rightmost(subhulls)]
@@ -252,8 +241,6 @@ def chan_step(S: List[Point], m: int, H: int) -> List[Point]:
                 eh = ph
                 ep = pp
         P.append((eh, ep))
-        print(q)
-        print(f"Added {subhulls[eh][ep]} to hull.\n")
 
         if P[-1] == P[0]:
             return to_points(P[0:-1], subhulls)
@@ -263,7 +250,6 @@ def chan_step(S: List[Point], m: int, H: int) -> List[Point]:
 
 def chan(S: List[Point]) -> List[Point]:
     for t in range(1, len(S)):
-        print(f"~~~~Step: {t}~~~~~~~~~")
         m = min(len(S), pow(2, pow(2, t)))
         L = chan_step(S, m, m)
         if L != []:
