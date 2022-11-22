@@ -218,6 +218,35 @@ def CalculateAvgTime(whichAlgorithm, n, h, max_iter):
     return np.mean(T, axis=1)
 
 
+def TimeFuncs(algs, S: List[Point], process=True, n=1_000_000):
+    """Calls all algorithms in algs on the dataset S for n times, and averages the time taken
+
+    Args:
+        algs (_type_): A list of function objects to call
+        S (List[Point]): The dataset to run the functions on
+        process (bool, optional): Use cpu time. When false, uses wall time. Defaults to True.
+        n (_type_, optional): The number of times to run each algorithm. Defaults to 1_000_000.
+
+    Returns:
+        Liat[float]: The average times for each algorithm provided, in the order of the algorithms in algs
+    """
+
+    import timeit
+    env = globals()
+    env['S'] = S
+    out = []
+    timer = timeit.default_timer
+    if process:
+        timer = time.process_time
+    for alg in algs:
+        out.append(timeit.timeit(lambda: alg(S),
+                   number=n, timer=timer, globals=env)/n)
+    return out
+
+
+all_algs = [jarvis, andrew, chan, quickhull, divideConquer_unsorted]
+
+
 if __name__ == '__main__':
 
     # whichAlgorithm = ['divideConquer_unsorted', 'jarvis', 'andrew', 'quickhull', 'chan']
