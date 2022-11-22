@@ -83,6 +83,41 @@ def CreateQHWorstCase(n: int) -> List[Point]:
     return out
 
 
+def CreateAndrewWorstCase(n: int) -> List[Point]:
+    """Creates a dataset with n points that meets the worst case for andrew's algorithm.
+    To do this, it places points with an upwards curve, and then places the final point below the leftmost point.
+    There is no constant bound on the location of points that all points will be within.
+
+    Args:
+        n (int): The number of points to generate
+
+    Returns:
+        List[Point]: The dataset generated
+    """
+
+    out = [Point.origin()]
+    for i in range(1, n-1):
+        out.append(Point(i, math.pow(i, 1.1)))
+    out.append(Point(n, -1))
+    return out
+
+
+def LimitH(S: List[Point]) -> List[Point]:
+    """Limits the output size of the input to 3. Requires that S be within the unit disk
+
+    Args:
+        S (List[Point]): The input dataset, contained within the unit disk
+
+    Returns:
+        List[Point]: An output dataset, consisting of all points in S, bounded by a triangle
+    """
+    out = S.copy()
+    out.append(Point(-10, -10))
+    out.append(Point(0, 10))
+    out.append(Point(10, -10))
+    return out
+
+
 def btbDataset():
     # Real Dataset 1: This dataset contains the locations of the farms where bovine tuberculosis was detected along with the
     # years in which it was detected and the "spoligotype" of the tuberculosis
