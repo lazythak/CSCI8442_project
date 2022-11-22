@@ -104,6 +104,46 @@ def mucosaDataset():
     return SECL+Sother
 
 
+def gorillaDataset():
+    # Real Dataset 3: Location of nesting sites of Gorillas in National park in Cameron
+    S = []
+    with open("gorillas.json") as f:
+        L = json.load(f)
+    for i in range(len(L[0])):
+        S.append(Point(L[0][i], L[1][i]))
+
+    (fig, ax) = new_plot()
+    plot_points(S, ax, c="g", wait=0)
+
+    plt.title("Gorilla data")
+    plt.xlabel("x-coordinate")
+    plt.ylabel("y-coordinate")
+    plt.show()
+
+    return S
+
+
+
+def nbfiresDataset():
+    # Real Dataset 3: Records of forest fires provided by New Brunsvick Department of Natural Resources of the fires between 1987
+    #                   and 2003
+    S = []
+    with open("nbfires.json") as f:
+        L = json.load(f)
+    for i in range(len(L[0])):
+        S.append(Point(L[0][i], L[1][i]))
+
+    (fig, ax) = new_plot()
+    plot_points(S, ax, c="g", wait=0)
+
+    plt.title("NBfires data")
+    plt.xlabel("x-coordinate")
+    plt.ylabel("y-coordinate")
+    plt.show()
+
+    return S
+
+
 def saveDataset(filename, data):
     with open(filename, 'wb') as handle:
         pickle.dump(data, handle)
@@ -140,9 +180,9 @@ def CalculateAvgTime(whichAlgorithm, n, h, max_iter):
 
 if __name__ == '__main__':
 
-    whichAlgorithm = ['divideConquer_unsorted', 'jarvis', 'andrew', 'quickhull', 'chan']
-    T = CalculateAvgTime(whichAlgorithm, 1000, 3, 1)
-    print(T)
+    # whichAlgorithm = ['divideConquer_unsorted', 'jarvis', 'andrew', 'quickhull', 'chan']
+    # T = CalculateAvgTime(whichAlgorithm, 1000, 3, 1)
+    # print(T)
 
 
 
@@ -153,7 +193,8 @@ if __name__ == '__main__':
     # scttr(SS)
 
 
-    S = mucosaDataset()
+    # S = mucosaDataset()
+    S = nbfiresDataset()
 
 
 
