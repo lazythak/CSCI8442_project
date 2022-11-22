@@ -41,6 +41,48 @@ def CreateCircleDataset(n, h):
 
     return S
 
+
+def CreateEvenCircleDataset(n: int) -> List[Point]:
+    """Creates a dataset of n points, spaced evenly around the unit circle
+    Worst case data set for jarvis march
+
+    Args:
+        n (int): The number of points to generate
+
+    Returns:
+        List[Point]: The dataset around the unit circle
+    """
+    out = []
+
+    theta = math.pi*2/n
+    for i in range(0, n):
+        out.append(Point(math.cos(theta * i), math.sin(theta * i)))
+
+    return out
+
+
+def CreateQHWorstCase(n: int) -> List[Point]:
+    """Creates a dataset with n points that meets the worst case for quickhull
+
+    Args:
+        n (int): The number of points to generate
+
+    Returns:
+        List[Point]: The dataset produced
+    """
+    out = [Point(1, 0)]
+
+    theta = math.pi
+    for _ in range(1, n):
+        out.append(Point(math.cos(theta), math.sin(theta)))
+        if theta == 0:
+            print("ZERO THETA")
+            return out
+        theta = theta/2
+
+    return out
+
+
 def btbDataset():
     # Real Dataset 1: This dataset contains the locations of the farms where bovine tuberculosis was detected along with the
     # years in which it was detected and the "spoligotype" of the tuberculosis
