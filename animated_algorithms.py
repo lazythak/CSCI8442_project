@@ -34,6 +34,8 @@ displayed as 'xkcd:blue green' for points and connections, after each combine st
 """
 
 
+# Quickhull
+
 def quickhull_animated(S: List[Point], wait: float = wait) -> List[Point]:
     (fig, ax) = new_plot()
 
@@ -147,6 +149,7 @@ def findquickhull_animated(S: List[Point], a: Point, b: Point, extra: List[Point
 
 
 # Jarvis Algorithm
+
 def jarvis_animated(S: List[Point], wait: float = wait) -> List[Point]:
     (fig, ax) = new_plot()
 
@@ -391,8 +394,8 @@ def divideConquer_unsorted_animated(S: List[Point], wait=wait) -> List[Point]:
     S = sorted(S, key=lambda z: (z.x, z.y))
     return divideConquer_animated(S, wait, extra=S)
 
-# Andrew's Algorithm, Animated
 
+# Andrew's Algorithm, Animated
 
 def draw_andrews_state(S, U, L, p, ax, wait: float, L_complete, U_complete, c1, c2, c3, c4=None, Extra=[]):
     """Draws the current state of andrews algorithm
@@ -498,7 +501,6 @@ def andrew_animated(S: List[Point], wait: float = wait) -> List[Point]:
 
 
 # Chan's Algorithm with Animation
-
 
 def rtangent_animated(v: List[Point], p: Point, ci: int, Extra: List[Point], ax, wait: float = wait) -> int:
     """computes the right, or upper, tangent from p to v.
