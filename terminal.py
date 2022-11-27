@@ -1,5 +1,5 @@
 from algorithms import *
 from animation_api import *
-from AlgorithmsWithAnimation import *
+from animated_algorithms import *
 from primitives import *
-from DatasetCreationAndTimeAnalysis import *
+from analysis import *

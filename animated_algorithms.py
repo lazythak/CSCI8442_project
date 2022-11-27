@@ -3,7 +3,7 @@ from primitives import *
 import matplotlib.pyplot as plt
 from animation_api import *
 import algorithms as alg
-from DatasetCreationAndTimeAnalysis import *
+from analysis import *
 
 wait = 1.0
 
